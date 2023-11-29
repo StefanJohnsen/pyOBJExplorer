@@ -1,3 +1,11 @@
+# WavefrontMTL.py - Python script for parsing wavefront mtl files
+#
+# Copyright (c) 2023 by FalconCoding
+# Author: Stefan Johnsen
+# Email: stefan.johnsen@outlook.com
+#
+# This software is released under the MIT License.
+
 import os
 from vpython import vector
 
@@ -34,7 +42,6 @@ class WavefrontOBJ:
 
         geometry = Geometry()
 
-        # Check if the file exists
         if not os.path.exists(fname):
             print(f"obj file not found: {fname}")
             return

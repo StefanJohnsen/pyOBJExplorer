@@ -1,3 +1,11 @@
+# WavefrontMTL.py - Python script for parsing wavefront mtl files
+#
+# Copyright (c) 2023 by FalconCoding
+# Author: Stefan Johnsen
+# Email: stefan.johnsen@outlook.com
+#
+# This software is released under the MIT License.
+
 import os
 import shutil
 from enum import Enum
@@ -83,12 +91,10 @@ class WavefrontMTL:
 
         with open(fname) as file:
             for line in file:
-                # Strip leading and trailing whitespace and skip empty or comment lines
                 line = line.strip()
-                if not line or line.startswith('#'):
-                    continue
+                
+                if not line: continue
 
-                # Parse command and data from each line
                 words = line.split()
                 command = words[0]
                 data = words[1:]

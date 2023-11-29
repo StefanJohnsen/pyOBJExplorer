@@ -1,3 +1,13 @@
+# Explorer.py
+# Python script for loading wavfront obj(+mtl) files
+# and visualize the 3D model in VPython (WebGL)
+#
+# Copyright (c) 2023 by FalconCoding
+# Author: Stefan Johnsen
+# Email: stefan.johnsen@outlook.com
+#
+# This software is released under the MIT License.
+
 from vpython import *
 from WavefrontOBJ import WavefrontOBJ
 from WavefrontMTL import WavefrontMTL

@@ -1,3 +1,16 @@
+
+# Triangulate.py - Python script for triangulating polygons
+#
+# This script specializes in triangulating polygons using two techniques:
+# - Fan method for convex polygons
+# - Earcut technique for concave polygons
+#
+# Copyright (c) 2023 by FalconCoding
+# Author: Stefan Johnsen
+# Email: stefan.johnsen@outlook.com
+#
+# This software is released under the MIT License.
+
 from vpython import vector, cross, dot, mag
 from enum import Enum
 
