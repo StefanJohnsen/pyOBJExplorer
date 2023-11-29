@@ -223,7 +223,7 @@ def create_box(center, size, color):
 
 #-------------------------------------------------------------------------------------
 
-def position_camera(aabbCenter, aabbSize, elevation=0.4, zoom=1.5, box = True):
+def position_camera(aabbCenter, aabbSize, elevation, zoom, box):
     area = [(aabbSize.y * aabbSize.z, vec(1, 0, 0)),
             (aabbSize.y * aabbSize.x, vec(0, 0, 1))]
     largest_area_direction = sorted(area, reverse=True)[0][1]
@@ -253,7 +253,7 @@ def load(file, box):
     obj.translate(-center)
     center = vector(0,0,0)
 
-    position_camera(center, size, box)
+    position_camera(center, size, 0.4, 1.5, box)
     set_light_behind_camera()
 
     count = 0
@@ -287,11 +287,10 @@ def main():
     parser.add_argument('-b', '--boundingbox', action='store_true', help='Show bounding box')
 
     if 'pydevd' in sys.modules:
-        args = parser.parse_args([loadThisObjFileInDebug, '-b']) # Set your debug test obj file, please
+        args = parser.parse_args([loadThisObjFileInDebug])
     else:
         args = parser.parse_args()
 
-    # Check if the file exists
     if not os.path.isfile(args.filename):
         print(f"Error: The file {args.filename} does not exist.")
         return

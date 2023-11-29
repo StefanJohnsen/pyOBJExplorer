@@ -43,12 +43,10 @@ class WavefrontOBJ:
 
         with open(fname) as file_in:
             for line in file_in:
-                # Strip leading and trailing whitespace and skip empty or comment lines
                 line = line.strip()
-                if not line or line.startswith('#'):
-                    continue
+                
+                if not line: continue
 
-                # Parse command and data from each line
                 words = line.split()
                 command = words[0]
                 data = words[1:]
