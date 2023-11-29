@@ -71,13 +71,10 @@ class WavefrontMTL:
         if fname is None: return
 
         path = os.path.split(fname)
-
-        # Check if the file is an OBJ file
         base, ext = os.path.splitext(fname)
         if ext.lower() == '.obj':
             fname = base + '.mtl'
 
-        # Check if the file exists
         if not os.path.exists(fname):
             print(f"mtl file not found: {fname}")
             return
