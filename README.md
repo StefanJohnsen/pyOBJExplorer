@@ -39,7 +39,7 @@ The OBJExplorer's MTL parser excels in interpreting and processing material attr
 - Texture Maps (map_Kd, map_Ka, map_Ks, map_Ns, map_d): Parses various texture maps, enriching the visual complexity and realism of materials.
 
 ## License
-This software is released under the MIT License terms.<br> 
-Details and terms of this license can be found at: https://opensource.org/license/mit/<br><br>
-🌟 Supporting OBJExplorer: If you find OBJExplorer useful or interesting, please consider giving it a star on GitHub. <br>
+This software is released under the MIT License terms.
+
+🌟 Supporting OBJExplorer: If you find OBJExplorer useful or interesting, please consider giving it a star on GitHub.
 Starring helps increase the visibility of the project and shows appreciation for the work. It's a simple gesture that can make a big difference!
