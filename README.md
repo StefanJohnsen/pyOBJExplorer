@@ -22,8 +22,6 @@ The OBJExplorer's OBJ parser is processing a wide range of data encapsulated wit
 - Normal Vectors Interpretation: Efficiently handles normal vectors, essential for realistic lighting and shading effects in 3D visualization.
 - Texture Coordination: Capable of parsing texture coordinates, facilitating detailed and accurate texturing of 3D model surfaces.
 - Robust Index Handling: Versatile in managing various types of indices (also negative), including faces, lines, and points, ensuring a thorough representation of the 3D object structure.
-  
-Designed to be thorough and precise, this parser allows for a detailed and faithful reconstruction of 3D models, encompassing all critical aspects of the OBJ format.
 
 # MTL Data Parsing Capabilities
 
@@ -39,8 +37,6 @@ The OBJExplorer's MTL parser excels in interpreting and processing material attr
 - Dissolve Factor (d) Interpretation: Deals with dissolve attributes, essential for understanding the transparency or opacity of materials.
 - Illumination Model (illum) Determination: Identifies the illumination model, crucial for defining how the material interacts with light.
 - Texture Maps (map_Kd, map_Ka, map_Ks, map_Ns, map_d): Parses various texture maps, enriching the visual complexity and realism of materials.
-
-This parser's detailed approach ensures a nuanced and accurate portrayal of material properties, enhancing the visual fidelity of 3D models rendered from OBJ files.
 
 ## License
 This software is released under the MIT License terms.<br> 
