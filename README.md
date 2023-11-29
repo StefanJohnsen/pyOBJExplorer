@@ -42,8 +42,6 @@ The OBJExplorer's MTL parser excels in interpreting and processing material attr
 
 This parser's detailed approach ensures a nuanced and accurate portrayal of material properties, enhancing the visual fidelity of 3D models rendered from OBJ files.
 
-![pv](https://pageview.vercel.app/?github_user=StefanJohnsen)
-
 ## License
 This software is released under the MIT License terms.<br> 
 Details and terms of this license can be found at: https://opensource.org/license/mit/<br><br>
