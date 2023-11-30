@@ -12,7 +12,7 @@ Ideal for students, designers, and enthusiasts in 3D modeling, OBJExplorer is a 
 - `Triangulate.py` Used for converting polygon faces in OBJ files into triangles through fan and earcut triangulation techniques.
 
 ### Run from commandline
-Clone this and copy a obj file to your directory OBJExplorer and run it lik
+Clone this and copy a obj file to your directory OBJExplorer and run it
 ```
 python explorer.py test.obj
 ```
