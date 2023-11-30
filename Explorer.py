@@ -22,7 +22,7 @@ import Triangulate
 sceneWidth = 1470          # Adjust the width as needed
 sceneHeight = 720          # Adjust the height as needed
 
-loadThisObjFileInDebug = 'c:\\falconcoding\\objexplorer\\drill.obj'
+loadThisObjFileInDebug = 'c:\\temp\\rubikcube.obj'
 
 #-------------------------------------------------------------------------------------
 
