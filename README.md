@@ -1,5 +1,7 @@
 # OBJExplorer
-Embrace the power of Python and VPython with OBJExplorer, a tool designed for parsing and visualizing Wavefront OBJ and MTL files. This solution gives the flexibility of Python and the graphical capabilities of VPython to offer a dynamic, interactive experience in exploring 3D models. Whether it's for educational purposes, design visualization, or simply for exploring the world of 3D graphics, OBJExplorer provides an intuitive and comprehensive platform for users to delve into the details of textures, materials, and geometries in OBJ files. Ideal for students, designers, and enthusiasts in 3D modeling, OBJExplorer is your gateway to experiencing 3D models in a new dimension.
+Embrace the power of Python and VPython with OBJExplorer, a tool designed for parsing and visualizing Wavefront OBJ and MTL files.<br><br>
+This solution gives the flexibility of Python and the graphical capabilities of VPython to offer a dynamic, interactive experience in exploring 3D models. Whether it's for educational purposes, design visualization, or simply for exploring the world of 3D graphics, OBJExplorer provides an intuitive and easy solution for users to delve into the details of textures, materials, and geometries in OBJ files. <br><br>
+Ideal for students, designers, and enthusiasts in 3D modeling, OBJExplorer is a nice tool to experiencing 3D models.
 
 ![OBJExplorer](https://github.com/StefanJohnsen/OBJExplorer/blob/main/objFiles/rubikcube.png)
 
@@ -14,32 +16,96 @@ Embrace the power of Python and VPython with OBJExplorer, a tool designed for pa
 ```
 pip install vpython
 ```
+After successfully installing VPython and cloning this repository, you can proceed to test it. Simply copy an OBJ file into the cloned directory and then run the relevant script to see the results.
+```
+python explorer.py test.obj
+```
+
 # OBJ Data Parsing Capabilities
 
-The OBJExplorer's OBJ parser is processing a wide range of data encapsulated within Wavefront OBJ files. Its capabilities include:
+The OBJExplorer's OBJ parser is processing a wide range of data encapsulated within Wavefront OBJ files. It reads vertices, texture coordinates, normals and geometrical elements like points, lines, faces. Notably, it is capable of interpreting all types of faces, including triangles, quads, and more complex polygons (with both positive and negative indices).
 
-- Vertex Data Processing: Accurately reads and interprets vertex coordinates, forming the fundamental geometric structure of the 3D models.
-- Normal Vectors Interpretation: Efficiently handles normal vectors, essential for realistic lighting and shading effects in 3D visualization.
-- Texture Coordination: Capable of parsing texture coordinates, facilitating detailed and accurate texturing of 3D model surfaces.
-- Robust Index Handling: Versatile in managing various types of indices (also negative), including faces, lines, and points, ensuring a thorough representation of the 3D object structure.
+Here are some sample formats of faces that OBJ parser can interpret:
+
+```
+# Triangle
+f 1 2 3 
+f 1//1 2//2 3//3 # triangle with vertex and normal
+f 1/1/1 2/2/2 3/3/3 # triangle with vertex, texture and normal
+
+# Quad
+f 1 2 3 4
+f 1//1 2//2 3//3 4//4 # quad with vertex and normal
+f 1/1/1 2/2/2 3/3/3 4/4/4 # quad with vertex, texture and normal
+
+# Polygon
+f 1 2 3 4 5 6 ....
+f 1//1 2//2 3//3 4//4 5//5 6//6 ... # polygon with vertex and normal
+f 1/1/1 2/2/2 3/3/3 4/4/4 5/5/5 6/6/6 ... # polygon with vertex, texture and normal
+
+# Also negative indices is supported
+```
 
 # MTL Data Parsing Capabilities
 
-The OBJExplorer's MTL parser excels in interpreting and processing material attributes associated with Wavefront MTL files, enabling detailed and realistic material representations for 3D models. Its key capabilities include:
+The OBJExplorer's MTL parser is designed to handle the most common material data found in Wavefront MTL files, providing essential functionality for 3D model materials. For those who require additional data types, the parser's code is straightforward and user-friendly, making it easy to understand and extend as needed.
 
-- Material Name Recognition: Identifies and assigns names to different materials, facilitating organized and intuitive material management.
-- Diffuse Color (Kd) Processing: Interprets the diffuse color attributes, critical for defining the primary color of materials under white light.
-- Ambient Color (Ka) Interpretation: Handles ambient color values, which contribute to the color seen in shadows and under indirect lighting.
-- Specular Color (Ks) Analysis: Reads specular color properties, essential for determining the color and intensity of highlights and reflections.
-- Emission Color (Ke) Parsing: Capable of interpreting emission color, defining the self-illumination properties of materials.
-- Specular Exponent (Ns) Handling: Manages the specular exponent attribute, influencing the sharpness and focus of specular highlights.
-- Optical Density (Ni) Reading: Processes optical density values, related to the refractive properties of materials.
-- Dissolve Factor (d) Interpretation: Deals with dissolve attributes, essential for understanding the transparency or opacity of materials.
-- Illumination Model (illum) Determination: Identifies the illumination model, crucial for defining how the material interacts with light.
-- Texture Maps (map_Kd, map_Ka, map_Ks, map_Ns, map_d): Parses various texture maps, enriching the visual complexity and realism of materials.
+Following material data is supported:
 
-## License
+```
+newmtl Material
+Kd 0.5 0.5 0.5
+Ka 0.0 0.0 0.0
+Ks 0.5 0.5 0.5
+Ke 0.0 0.0 0.0
+Ns 168.89702
+Ni 1.0
+d 1.0
+illum 2
+map_Kd pic1.jpg
+map_Ka pic2.jpg
+map_Ks pic3.jpg
+map_Ns pic4.jpg
+map_d pic5.jpg
+```
+
+# How to Get Started
+
+To begin using the OBJExplorer, start by examining the Explore.py script. This script is the heart of the operation. To set everything up, you'll need just a few lines of code:
+
+```
+from vpython import *
+from WavefrontOBJ import WavefrontOBJ
+from WavefrontMTL import WavefrontMTL
+import Triangulate
+
+# Create an instance of the WavefrontOBJ parser
+obj = WavefrontOBJ()
+# Load your OBJ file
+obj.load(file)
+
+# Create an instance of the WavefrontMTL parser
+mtl = WavefrontMTL()
+# Load the associated MTL file
+mtl.load(obj.mtllib)
+
+# Now, explore the geometry of your OBJ file with the loaded materials
+explore_geometry(obj, mtl)
+```
+
+# VPython Controls Guide
+
+Mouse controls only
+- Rotate: Click and drag with the right mouse button to rotate the scene.
+- Zoom: Scroll the middle mouse wheel to zoom in and out.
+  
+Mouse Controls and Keyboard
+- Rotate: `Ctrl` + click and drag with the left mouse button to rotate the scene.
+- Pan: `Shift` + click and drag with the left mouse button to pan the scene.
+
+# License
 This software is released under the MIT License terms.
 
-🌟 Supporting OBJExplorer: If you find OBJExplorer useful or interesting, please consider giving it a star on GitHub.
-Starring helps increase the visibility of the project and shows appreciation for the work. It's a simple gesture that can make a big difference!
+🌟 Support OBJExplorer<br>
+If you find OBJExplorer useful or interesting, please consider giving it a star on GitHub 😊
+
