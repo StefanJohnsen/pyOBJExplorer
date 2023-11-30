@@ -33,56 +33,63 @@ class Material:
     def shininess(self): return self.Ns
     def texture(self, basename = True):
         if self.map_Kd is None: return None
-        if basename:
-            return os.path.basename(self.map_Kd)
+        if basename: return os.path.basename(self.map_Kd)
         return self.map_Kd
 
-def copyTexture(file):
+def copyFile(file):
     if file is None: return None
+    if not os.path.exists(file): return
     directory = os.getcwd()
     basename = os.path.basename(file)
-    shutil.copy(file, os.path.join(directory, basename))
+    copyfile = os.path.join(directory, basename)
+    if os.path.exists(copyfile): return
+    if file.lower() == copyfile.lower(): return
+    shutil.copy(file, copyfile)
 
-def deleteTexture(file):
+def deleteFile(file):
     if file is None: return None
+    if not os.path.exists(file): return
     directory = os.getcwd()
     basename = os.path.basename(file)
-    os.remove(os.path.join(directory, basename))
+    copyfile = os.path.join(directory, basename)
+    if not os.path.exists(copyfile): return
+    if file.lower() == copyfile.lower(): return
+    print(f"{file.lower()} == {copyfile.lower()}")
+    os.remove(copyfile)
 
 class WavefrontMTL:
     def __init__(self):
         self.materials = [] #List of materials
-        self.deleteFiles = False
 
     def copyTextures(self):
         for material in self.materials:
-            copyTexture(material.map_Kd)
-            copyTexture(material.map_Ka)
-            copyTexture(material.map_Ks)
-            copyTexture(material.map_Ns)
-            copyTexture(material.map_d)
+            copyFile(material.map_Kd)
+            copyFile(material.map_Ka)
+            copyFile(material.map_Ks)
+            copyFile(material.map_Ns)
+            copyFile(material.map_d)
 
     def deleteTextures(self):
         for material in self.materials:
-            deleteTexture(material.map_Kd)
-            deleteTexture(material.map_Ka)
-            deleteTexture(material.map_Ks)
-            deleteTexture(material.map_Ns)
-            deleteTexture(material.map_d)
+            deleteFile(material.map_Kd)
+            deleteFile(material.map_Ka)
+            deleteFile(material.map_Ks)
+            deleteFile(material.map_Ns)
+            deleteFile(material.map_d)
 
     def __del__(self):
-        if self.deleteFiles:
-            self.deleteTextures()
+        self.deleteTextures()
 
-    def load(self, fname, copyTextures = True):
+    def load(self, fname):
 
         if fname is None: return
 
-        path = os.path.split(fname)
-        base, ext = os.path.splitext(fname)
-        if ext.lower() == '.obj':
-            fname = base + '.mtl'
-
+        directory, filename = os.path.split(fname)
+        if not directory: directory = os.getcwd()
+        base, ext = os.path.splitext(filename)
+        if ext.lower() == '.obj': ext = '.mtl'
+        fname = os.path.join(directory, base + ext)
+        
         if not os.path.exists(fname):
             print(f"mtl file not found: {fname}")
             return
@@ -121,25 +128,20 @@ class WavefrontMTL:
                 elif command == 'illum':
                     material.illum = int(data[0])
                 elif command == 'map_Kd':
-                    material.map_Kd = os.path.join(path[0], data[0])
+                    material.map_Kd = os.path.join(directory, data[0])
                 elif command == 'map_Ka':
-                    material.map_Ka = os.path.join(path[0], data[0])
+                    material.map_Ka = os.path.join(directory, data[0])
                 elif command == 'map_Ks':
-                    material.map_Ks = os.path.join(path[0], data[0])
+                    material.map_Ks = os.path.join(directory, data[0])
                 elif command == 'map_Ns':
-                    material.map_Ns = os.path.join(path[0], data[0])
+                    material.map_Ns = os.path.join(directory, data[0])
                 elif command == 'map_d':
-                    material.map_d = os.path.join(path[0], data[0])
+                    material.map_d = os.path.join(directory, data[0])
 
         if material is not None:
             self.materials.append(material)
 
-        if path[0].lower() == os.getcwd().lower():
-            copyTextures = False
-
-        self.deleteFiles = copyTextures
-
-        if copyTextures: self.copyTextures()
+        self.copyTextures()
 
     def material(self, name):
         for material in self.materials:
