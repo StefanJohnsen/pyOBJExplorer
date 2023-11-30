@@ -105,7 +105,3 @@ Mouse Controls and Keyboard
 
 # License
 This software is released under the MIT License terms.
-
-🌟 Support OBJExplorer<br>
-If you find OBJExplorer useful or interesting, please consider giving it a star on GitHub 😊
-
