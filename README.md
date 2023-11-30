@@ -11,17 +11,16 @@ Ideal for students, designers, and enthusiasts in 3D modeling, OBJExplorer is a 
 - `WavefrontMTL.py` A standalone parser for MTL files, also usable independently in various projects.
 - `Triangulate.py` Used for converting polygon faces in OBJ files into triangles through fan and earcut triangulation techniques.
 
-### Run from commandline
-Clone this and copy a obj file to your directory OBJExplorer and run it
-```
-python explorer.py test.obj
-```
-
 # Visualization
 [VPython](https://pypi.org/project/vpython/) is required to use `Explorer.py`
 ```
 pip install vpython
 ```
+After successfully installing VPython and cloning this repository, you can proceed to test it. Simply copy an OBJ file into the cloned directory and then run the relevant script to see the results.
+```
+python explorer.py test.obj
+```
+
 # OBJ Data Parsing Capabilities
 
 The OBJExplorer's OBJ parser is processing a wide range of data encapsulated within Wavefront OBJ files. It reads vertices, texture coordinates, normals and geometrical elements like points, lines, faces. Notably, it is capable of interpreting all types of faces, including triangles, quads, and more complex polygons (with both positive and negative indices).
