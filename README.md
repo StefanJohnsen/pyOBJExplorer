@@ -86,6 +86,16 @@ mtl.load(obj.mtllib)
 explore_geometry(obj, mtl)
 ```
 
+# VPython Controls Guide
+
+Mouse controls only
+- Rotate: Click and drag with the right mouse button to rotate the scene.
+- Zoom: Scroll the middle mouse wheel to zoom in and out.
+  
+Mouse Controls and Keyboard
+- Rotate: `Ctrl` + click and drag with the left mouse button to rotate the scene.
+- Pan: `Shift` + click and drag with the left mouse button to pan the scene.
+
 # License
 This software is released under the MIT License terms.
 
