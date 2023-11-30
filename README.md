@@ -16,7 +16,9 @@ pip install vpython
 ```
 # OBJ Data Parsing Capabilities
 
-The OBJExplorer's OBJ parser is processing a wide range of data encapsulated within Wavefront OBJ files. It reads vertices, texture coordinates, normals and geometrical elements like points, lines, faces. Notably, it is capable of interpreting all types of faces, including triangles, quads, and more complex polygons (with both positive and negative indices).
+The OBJExplorer's OBJ parser is processing a wide range of data encapsulated within Wavefront OBJ files.<br>
+It reads vertices, texture coordinates, normals and geometrical elements like points, lines, faces.<br>
+Notably, it is capable of interpreting all types of faces, including triangles, quads, and more complex polygons (with both positive and negative indices).
 
 Here are some sample formats of faces that OBJ parser can interpret:
 
@@ -41,7 +43,8 @@ f 1/1/1 2/2/2 3/3/3 4/4/4 5/5/5 6/6/6 ... # polygon with vertex, texture and nor
 
 # MTL Data Parsing Capabilities
 
-The OBJExplorer's MTL parser is designed to handle the most common material data found in Wavefront MTL files, providing essential functionality for 3D model materials. For those who require additional data types, the parser's code is straightforward and user-friendly, making it easy to understand and extend as needed.
+The OBJExplorer's MTL parser is designed to handle the most common material data found in Wavefront MTL files, providing essential functionality for 3D model materials. <br>
+For those who require additional data types, the parser's code is straightforward and user-friendly, making it easy to understand and extend as needed.
 
 Following material data is supported:
 
@@ -64,7 +67,8 @@ map_d pic5.jpg
 
 # How to Get Started
 
-To begin using the OBJExplorer, start by examining the Explore.py script. This script is the heart of the operation. To set everything up, you'll need just a few lines of code:
+To begin using the OBJExplorer, start by examining the Explore.py script. This script is the heart of the operation.<br>
+To set everything up, you'll need just a few lines of code:
 
 ```
 from vpython import *
