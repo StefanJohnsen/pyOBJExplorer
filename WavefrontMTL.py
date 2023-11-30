@@ -134,6 +134,9 @@ class WavefrontMTL:
         if material is not None:
             self.materials.append(material)
 
+        if path[0].lower() == os.getcwd().lower():
+            copyTextures = False
+
         self.deleteFiles = copyTextures
 
         if copyTextures: self.copyTextures()

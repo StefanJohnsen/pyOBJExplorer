@@ -15,7 +15,6 @@ from WavefrontMTL import WavefrontMTL
 import os
 import sys
 import argparse
-import argparse
 import Triangulate
 
 #-------------------------------------------------------------------------------------
@@ -23,7 +22,7 @@ import Triangulate
 sceneWidth = 1470          # Adjust the width as needed
 sceneHeight = 720          # Adjust the height as needed
 
-loadThisObjFileInDebug = 'c:\\temp\\rubikcube.obj'
+loadThisObjFileInDebug = 'c:\\falconcoding\\objexplorer\\drill.obj'
 
 #-------------------------------------------------------------------------------------
 
@@ -55,6 +54,13 @@ def create_triangle_normal(v0, v1, v2, n0, n1, n2, color):
     c = vertex(pos=v2, normal = n2, color=color)
     return triangle(vs=[a,b,c])
 
+def create_triangle_texture(v0, v1, v2, t0, t1, t2, texture):
+    n = normal(v0, v1, v2)
+    a = vertex(pos=v0, normal=n, texpos=t0)
+    b = vertex(pos=v1, normal=n, texpos=t1)
+    c = vertex(pos=v2, normal=n, texpos=t2)
+    return triangle(vs=[a,b,c], texture=texture)
+
 def create_triangle_normal_texture(v0, v1, v2, n0, n1, n2, t0, t1, t2, texture):
     a = vertex(pos=v0, normal=n0, texpos=t0)
     b = vertex(pos=v1, normal=n1, texpos=t1)
@@ -75,6 +81,14 @@ def create_quad_normal(v0, v1, v2, v3, n0, n1, n2, n3, color):
     c = vertex(pos=v2, normal = n2, color=color)
     d = vertex(pos=v3, normal = n3, color=color)
     return quad(vs=[a,b,c,d])
+
+def create_quad_texture(v0, v1, v2, v3, t0, t1, t2, t3, texture):
+    n = normal(v0, v1, v2)
+    a = vertex(pos=v0, normal=n, texpos=t0)
+    b = vertex(pos=v1, normal=n, texpos=t1)
+    c = vertex(pos=v2, normal=n, texpos=t2)
+    d = vertex(pos=v3, normal=n, texpos=t3)
+    return quad(vs=[a,b,c,d], texture=texture)
 
 def create_quad_normal_texture(v0, v1, v2, v3, n0, n1, n2, n3, t0, t1, t2, t3, texture):
     a = vertex(pos=v0, normal=n0, texpos=t0)
@@ -204,8 +218,6 @@ def create_faces(obj, geometry, material):
             create_triangle_normal(t.p0, t.p1, t.p2, n, n, n, color)
 
 def create_geometry(obj, mtl, geometry):
-    if obj is None: return
-    if mtl is None: return
     if geometry is None: return
     material = mtl.material(geometry.material)
     create_points(obj, geometry, material)
@@ -213,6 +225,16 @@ def create_geometry(obj, mtl, geometry):
     #create_wire_faces(obj, geometry, material)
     create_faces(obj, geometry, material)
 
+def explore_geometry(obj, mtl):
+    if obj is None: return
+    if mtl is None: return
+    count = 0
+    size = len(obj.geometry)
+    for geometry in obj.geometry:
+        count+=1
+        print(f"geometry: {count} / {size} / faces : {len(geometry.face)}")
+        create_geometry(obj, mtl, geometry)
+        
 def create_box(center, size, color):
     if center is None: return
     size /= 2
@@ -265,14 +287,8 @@ def load(file, box):
 
     position_camera(center, size, 0.4, 1.5, box)
     set_light_behind_camera()
-
-    count = 0
-    size = len(obj.geometry)
-
-    for geometry in obj.geometry:
-        count+=1
-        print(f"geometry: {count} / {size} / faces : {len(geometry.face)}")
-        create_geometry(obj, mtl, geometry)
+    
+    explore_geometry(obj, mtl)
 
 #-------------------------------------------------------------------------------------
 
