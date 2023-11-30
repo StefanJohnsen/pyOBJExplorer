@@ -89,6 +89,6 @@ explore_geometry(obj, mtl)
 # License
 This software is released under the MIT License terms.
 
-🌟 Supporting OBJExplorer 
+🌟 Support OBJExplorer 
 If you find OBJExplorer useful or interesting, please consider giving it a star on GitHub 😊
 
