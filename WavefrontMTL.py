@@ -54,14 +54,14 @@ def deleteFile(file):
     copyfile = os.path.join(directory, basename)
     if not os.path.exists(copyfile): return
     if file.lower() == copyfile.lower(): return
-    print(f"{file.lower()} == {copyfile.lower()}")
     os.remove(copyfile)
 
 class WavefrontMTL:
     def __init__(self):
         self.materials = [] #List of materials
+        self.delteTextures = False
 
-    def copyTextures(self):
+    def copy_textures(self):
         for material in self.materials:
             copyFile(material.map_Kd)
             copyFile(material.map_Ka)
@@ -69,7 +69,7 @@ class WavefrontMTL:
             copyFile(material.map_Ns)
             copyFile(material.map_d)
 
-    def deleteTextures(self):
+    def delete_textures(self):
         for material in self.materials:
             deleteFile(material.map_Kd)
             deleteFile(material.map_Ka)
@@ -78,7 +78,8 @@ class WavefrontMTL:
             deleteFile(material.map_d)
 
     def __del__(self):
-        self.deleteTextures()
+        if self.delteTextures:
+            self.delete_textures()
 
     def load(self, fname):
 
@@ -140,8 +141,11 @@ class WavefrontMTL:
 
         if material is not None:
             self.materials.append(material)
-
-        self.copyTextures()
+        
+        self.copy_textures()
+            
+        if directory.lower() != os.getcwd().lower():
+            self.delteTextures = True
 
     def material(self, name):
         for material in self.materials:
