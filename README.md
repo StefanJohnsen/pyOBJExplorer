@@ -3,7 +3,7 @@ Embrace the power of Python and VPython with OBJExplorer, a tool designed for pa
 This solution gives the flexibility of Python and the graphical capabilities of VPython to offer a dynamic, interactive experience in exploring 3D models. Whether it's for educational purposes, design visualization, or simply for exploring the world of 3D graphics, OBJExplorer provides an intuitive and easy solution for users to delve into the details of textures, materials, and geometries in OBJ files. <br><br>
 Ideal for students, designers, and enthusiasts in 3D modeling, OBJExplorer is a nice tool to experiencing 3D models.
 
-![OBJExplorer](https://github.com/StefanJohnsen/OBJExplorer/blob/main/objFiles/rubikcube.png)
+![OBJExplorer](https://github.com/StefanJohnsen/OBJExplorer/blob/main/objFiles/explorer.png)
 
 ### Following files is included
 - `Explorer.py` The main file to run. It can also be executed from the command line with a specified OBJ file.
