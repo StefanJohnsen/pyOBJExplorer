@@ -1,7 +1,7 @@
-# OBJExplorer
-Embrace the power of Python and VPython with OBJExplorer, a tool designed for parsing and visualizing Wavefront OBJ and MTL files.<br><br>
-This solution gives the flexibility of Python and the graphical capabilities of VPython to offer a dynamic, interactive experience in exploring 3D models. Whether it's for educational purposes, design visualization, or simply for exploring the world of 3D graphics, OBJExplorer provides an intuitive and easy solution for users to delve into the details of textures, materials, and geometries in OBJ files. <br><br>
-Ideal for students, designers, and enthusiasts in 3D modeling, OBJExplorer is a nice tool to experiencing 3D models.
+# pyOBJExplorer
+Embrace the power of Python and VPython with pyOBJExplorer, a tool designed for parsing and visualizing Wavefront OBJ and MTL files.<br><br>
+This solution gives the flexibility of Python and the graphical capabilities of VPython to offer a dynamic, interactive experience in exploring 3D models. Whether it's for educational purposes, design visualization, or simply for exploring the world of 3D graphics, pyOBJExplorer provides an intuitive and easy solution for users to delve into the details of textures, materials, and geometries in OBJ files. <br><br>
+Ideal for students, designers, and enthusiasts in 3D modeling, pyOBJExplorer is a nice tool to experiencing 3D models.
 
 ![OBJExplorer](https://github.com/StefanJohnsen/OBJExplorer/blob/main/objFiles/explorer.png)
 
@@ -23,7 +23,7 @@ python explorer.py test.obj
 
 # OBJ Data Parsing Capabilities
 
-The OBJExplorer's OBJ parser is processing a wide range of data encapsulated within Wavefront OBJ files. It reads vertices, texture coordinates, normals and geometrical elements like points, lines, faces. Notably, it is capable of interpreting all types of faces, including triangles, quads, and more complex polygons (with both positive and negative indices).
+The pyOBJExplorer's OBJ parser is processing a wide range of data encapsulated within Wavefront OBJ files. It reads vertices, texture coordinates, normals and geometrical elements like points, lines, faces. Notably, it is capable of interpreting all types of faces, including triangles, quads, and more complex polygons (with both positive and negative indices).
 
 Here are some sample formats of faces that OBJ parser can interpret:
 
@@ -48,7 +48,7 @@ f 1/1/1 2/2/2 3/3/3 4/4/4 5/5/5 6/6/6 ... # polygon with vertex, texture and nor
 
 # MTL Data Parsing Capabilities
 
-The OBJExplorer's MTL parser is designed to handle the most common material data found in Wavefront MTL files, providing essential functionality for 3D model materials. For those who require additional data types, the parser's code is straightforward and user-friendly, making it easy to understand and extend as needed.
+The pyOBJExplorer's MTL parser is designed to handle the most common material data found in Wavefront MTL files, providing essential functionality for 3D model materials. For those who require additional data types, the parser's code is straightforward and user-friendly, making it easy to understand and extend as needed.
 
 Following material data is supported:
 
@@ -71,7 +71,7 @@ map_d pic5.jpg
 
 # How to Get Started
 
-To begin using the OBJExplorer, start by examining the Explore.py script. This script is the heart of the operation. To set everything up, you'll need just a few lines of code:
+To begin using the pyOBJExplorer, start by examining the Explore.py script. This script is the heart of the operation. To set everything up, you'll need just a few lines of code:
 
 ```
 from vpython import *
