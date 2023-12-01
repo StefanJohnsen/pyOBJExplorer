@@ -8,16 +8,17 @@
 
 import os
 import shutil
-from enum import Enum
-from vpython import vector
+import numpy as np
+
+vector = np.array
 
 class Material:
     def __init__(self):
         self.name = None                    # Material name
-        self.Kd = vector(0.5, 0.5, 0.5)     # Default diffuse color
-        self.Ka = vector(0.0, 0.0, 0.0)     # Default ambient color
-        self.Ks = vector(0.0, 0.0, 0.0)     # Default specular color
-        self.Ke = vector(0.0, 0.5, 0.0)     # Default emission color
+        self.Kd = vector([0.5, 0.5, 0.5])     # Default diffuse color
+        self.Ka = vector([0.0, 0.0, 0.0])     # Default ambient color
+        self.Ks = vector([0.0, 0.0, 0.0])     # Default specular color
+        self.Ke = vector([0.0, 0.5, 0.0])     # Default emission color
         self.Ns = 0.0                       # Default specular exponent
         self.Ni = 1.0                       # Default optical density
         self.d = 1.0                        # Default dissolve
@@ -113,13 +114,13 @@ class WavefrontMTL:
                     material = Material()
                     material.name = data[0]
                 elif command == 'Ka':
-                    material.Ka = vector(*tuple(map(float, data[:3])))
+                    material.Ka = vector(list(map(float, data[:3])))
                 elif command == 'Kd':
-                    material.Kd = vector(*tuple(map(float, data[:3])))
+                    material.Kd = vector(list(map(float, data[:3])))
                 elif command == 'Ks':
-                    material.Ks = vector(*tuple(map(float, data[:3])))
+                    material.Ks = vector(list(map(float, data[:3])))
                 elif command == 'Ke':
-                    material.Ke = vector(*tuple(map(float, data[:3])))
+                    material.Ke = vector(list(map(float, data[:3])))
                 elif command == 'Ns':
                     material.Ns = float(data[0])
                 elif command == 'Ni':

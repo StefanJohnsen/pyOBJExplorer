@@ -7,38 +7,9 @@
 # Email: stefan.johnsen@outlook.com
 #
 # This software is released under the MIT License.
-
-#-------------------------------------------------------------------------------------
-# import VPython without getting ZeroDivisionError at termination
 #-------------------------------------------------------------------------------------
 
-import atexit
-import functools
-import contextlib
-
-def register():
-    _atexit_register = atexit.register
-     
-    def register(func, *args, **kwargs):
-        if func.__name__ == 'Exit':
-            @functools.wraps(func)
-            def wrapper(*args, **kwargs):
-                with contextlib.suppress(ZeroDivisionError):
-                    return func(*args, **kwargs)
-            _atexit_register(wrapper, *args, **kwargs)
-        else:
-            _atexit_register(func, *args, **kwargs)
-        return func
-    register.old = _atexit_register
-    return register
-     
-register = register()
-atexit.register = register
-try:
-    from vpython import *
-finally:
-    atexit.register = register.old
-    del register
+import vpythonex as vp                   # import a wrapper to avoid ZeroDivisionError 
 
 #-------------------------------------------------------------------------------------    
 
@@ -49,93 +20,113 @@ import os
 import sys
 import argparse
 import Triangulate
+import numpy as np
     
 #-------------------------------------------------------------------------------------
 
 sceneWidth = 1470          # Adjust the width as needed
 sceneHeight = 720          # Adjust the height as needed
 
-loadThisObjFileInDebug = 'c:\\temp\\rubikcube.obj'
+loadThisObjFileInDebug = 'c:\\temp\\drill.obj'
 
 #-------------------------------------------------------------------------------------
 
+radiusLine = 0.01
+radiusPoint = 0.01
+
+def setRadiusLinePoint(aabbSize):
+    global radiusLine, radiusPoint
+    radiusLine = max(aabbSize[0], aabbSize[1], aabbSize[2]) / 1000
+    radiusPoint = radiusLine
+
+#-------------------------------------------------------------------------------------
+
+def vector(array):
+    return vp.vector(array[0], array[1], array[2])
+
 def normal(v0, v1, v2):
-    n = cross(v1 - v0, v2 - v1)
-    if n.mag == 0.0: 
-        return vector(0,0,0)
-    return n / n.mag
+    n = np.cross(v1 - v0, v2 - v1)
+    if np.linalg.norm(n) == 0.0:
+        return np.array([0.0, 0.0, 0.0])
+    return n / np.linalg.norm(n)
+
+#-------------------------------------------------------------------------------------
 
 def create_point(v, radius, color):
-    shininess /= 1000
-    return sphere(pos = v, radius=radius, color=color)
-
+    return vp.sphere(pos=vector(v), radius=radius, color=vector(color))
+   
 def create_line(v0, v1, radius, color):
-    line = cylinder(pos=v0, axis=v1 - v0, radius=radius, color=color)
-    node = sphere(pos = v1, radius=radius, color=color)
+    rgb = vector(color)
+    line = vp.cylinder(pos=vector(v0), axis=vector(v1-v0), radius=radius, color=rgb)
+    node = vp.sphere(pos=vector(v1), radius=radius, color=rgb)
     return line, node
-
+    
 def create_triangle(v0, v1, v2, color):
-    n = normal(v0, v1, v2)
-    a = vertex(pos=v0, normal = n, color=color)
-    b = vertex(pos=v1, normal = n, color=color)
-    c = vertex(pos=v2, normal = n, color=color)
-    return triangle(vs=[a,b,c])
+    rgb = vector(color)
+    n = vector(normal(v0, v1, v2))
+    a = vp.vertex(pos=vector(v0), normal=n, color=rgb)
+    b = vp.vertex(pos=vector(v1), normal=n, color=rgb)
+    c = vp.vertex(pos=vector(v2), normal=n, color=rgb)
+    return vp.triangle(vs=[a,b,c])
 
 def create_triangle_normal(v0, v1, v2, n0, n1, n2, color):
-    a = vertex(pos=v0, normal = n0, color=color)
-    b = vertex(pos=v1, normal = n1, color=color)
-    c = vertex(pos=v2, normal = n2, color=color)
-    return triangle(vs=[a,b,c])
+    rgb = vector(color)    
+    a = vp.vertex(pos=vector(v0), normal=vector(n0), color=rgb)
+    b = vp.vertex(pos=vector(v1), normal=vector(n1), color=rgb)
+    c = vp.vertex(pos=vector(v2), normal=vector(n2), color=rgb)
+    return vp.triangle(vs=[a,b,c])
 
 def create_triangle_texture(v0, v1, v2, t0, t1, t2, texture):
-    n = normal(v0, v1, v2)
-    a = vertex(pos=v0, normal=n, texpos=t0)
-    b = vertex(pos=v1, normal=n, texpos=t1)
-    c = vertex(pos=v2, normal=n, texpos=t2)
-    return triangle(vs=[a,b,c], texture=texture)
+    n = vector(normal(v0, v1, v2))
+    a = vp.vertex(pos=vector(v0), normal=n, texpos=vector(t0))
+    b = vp.vertex(pos=vector(v1), normal=n, texpos=vector(t1))
+    c = vp.vertex(pos=vector(v2), normal=n, texpos=vector(t2))
+    return vp.triangle(vs=[a,b,c], texture=texture)
 
 def create_triangle_normal_texture(v0, v1, v2, n0, n1, n2, t0, t1, t2, texture):
-    a = vertex(pos=v0, normal=n0, texpos=t0)
-    b = vertex(pos=v1, normal=n1, texpos=t1)
-    c = vertex(pos=v2, normal=n2, texpos=t2)
-    return triangle(vs=[a,b,c], texture=texture)
+    a = vp.vertex(pos=vector(v0), normal=vector(n0), texpos=vector(t0))
+    b = vp.vertex(pos=vector(v1), normal=vector(n1), texpos=vector(t1))
+    c = vp.vertex(pos=vector(v2), normal=vector(n2), texpos=vector(t2))
+    return vp.triangle(vs=[a,b,c], texture=texture)
 
 def create_quad(v0, v1, v2, v3, color):
-    n = normal(v0, v1, v2)
-    a = vertex(pos=v0, normal = n, color=color)
-    b = vertex(pos=v1, normal = n, color=color)
-    c = vertex(pos=v2, normal = n, color=color)
-    d = vertex(pos=v3, normal = n, color=color)
-    return quad(vs=[a,b,c,d])
+    rgb = vector(color)
+    n = vector(normal(v0, v1, v2))
+    a = vp.vertex(pos=vector(v0), normal=n, color=rgb)
+    b = vp.vertex(pos=vector(v1), normal=n, color=rgb)
+    c = vp.vertex(pos=vector(v2), normal=n, color=rgb)
+    d = vp.vertex(pos=vector(v3), normal=n, color=rgb)
+    return vp.quad(vs=[a,b,c,d])
 
 def create_quad_normal(v0, v1, v2, v3, n0, n1, n2, n3, color):
-    a = vertex(pos=v0, normal = n0, color=color)
-    b = vertex(pos=v1, normal = n1, color=color)
-    c = vertex(pos=v2, normal = n2, color=color)
-    d = vertex(pos=v3, normal = n3, color=color)
-    return quad(vs=[a,b,c,d])
+    rgb = vector(color)    
+    a = vp.vertex(pos=vector(v0), normal=vector(n0), color=rgb)
+    b = vp.vertex(pos=vector(v1), normal=vector(n1), color=rgb)
+    c = vp.vertex(pos=vector(v2), normal=vector(n2), color=rgb)
+    d = vp.vertex(pos=vector(v3), normal=vector(n3), color=rgb)
+    return vp.quad(vs=[a,b,c,d])
 
 def create_quad_texture(v0, v1, v2, v3, t0, t1, t2, t3, texture):
-    n = normal(v0, v1, v2)
-    a = vertex(pos=v0, normal=n, texpos=t0)
-    b = vertex(pos=v1, normal=n, texpos=t1)
-    c = vertex(pos=v2, normal=n, texpos=t2)
-    d = vertex(pos=v3, normal=n, texpos=t3)
-    return quad(vs=[a,b,c,d], texture=texture)
+    n = vector(normal(v0, v1, v2))
+    a = vp.vertex(pos=vector(v0), normal=n, texpos=vector(t0))
+    b = vp.vertex(pos=vector(v1), normal=n, texpos=vector(t1))
+    c = vp.vertex(pos=vector(v2), normal=n, texpos=vector(t2))
+    d = vp.vertex(pos=vector(v3), normal=n, texpos=vector(t3))
+    return vp.quad(vs=[a,b,c,d], texture=texture)
 
 def create_quad_normal_texture(v0, v1, v2, v3, n0, n1, n2, n3, t0, t1, t2, t3, texture):
-    a = vertex(pos=v0, normal=n0, texpos=t0)
-    b = vertex(pos=v1, normal=n1, texpos=t1)
-    c = vertex(pos=v2, normal=n2, texpos=t2)
-    d = vertex(pos=v3, normal=n3, texpos=t3)
-    return quad(vs=[a,b,c,d], texture=texture)
-
+    a = vp.vertex(pos=vector(v0), normal=vector(n0), texpos=vector(t0))
+    b = vp.vertex(pos=vector(v1), normal=vector(n1), texpos=vector(t1))
+    c = vp.vertex(pos=vector(v2), normal=vector(n2), texpos=vector(t2))
+    d = vp.vertex(pos=vector(v3), normal=vector(n3), texpos=vector(t3))
+    return vp.quad(vs=[a,b,c,d], texture=texture)
+    
 def create_wire_face(vertices, radius, color):
     if vertices is None: return
     if len(vertices) < 3: return
-    face = curve(radius=radius, color=color)
+    face = vp.curve(radius=radius, color=vector(color))
     for vertex in vertices:
-        face.append(vertex)
+        face.append(vector(vertex))
     return face
 
 #-------------------------------------------------------------------------------------
@@ -146,7 +137,7 @@ def create_points(obj, geometry, material):
         if point is None: continue
         for i in point:
             v = obj.vertex[i]
-            create_point(v, 0.12, material.color())
+            create_point(v, radiusPoint, material.color())
 
 def create_lines(obj, geometry, material):
     if geometry.line is None: return
@@ -157,19 +148,19 @@ def create_lines(obj, geometry, material):
         for i in range(size-1):
             v0 = obj.vertex[line[i]]
             v1 = obj.vertex[line[i + 1]]
-            create_line(v0, v1, 0.01, material.color())
+            create_line(v0, v1, radiusLine, material.color())
 
 def create_wire_faces(obj, geometry, material):
     if geometry.face is None: return
     for face in geometry.face:
         if face is None: continue
-        size = len(face)
+        size = len(face.vertex)
         if size < 3: continue
         face_vertex = []
-        for i in face:
+        for i in face.vertex:
             v = obj.vertex[i]
             face_vertex.append(v)
-        create_wire_face(face_vertex, 0.01, material.color())
+        create_wire_face(face_vertex, radiusLine, material.color())
 
 def create_faces(obj, geometry, material):
     if geometry.face is None: return
@@ -250,15 +241,18 @@ def create_faces(obj, geometry, material):
         for t in triangles:
             create_triangle_normal(t.p0, t.p1, t.p2, n, n, n, color)
 
-def create_geometry(obj, mtl, geometry):
+def create_geometry(obj, mtl, geometry, wireframe):
     if geometry is None: return
     material = mtl.material(geometry.material)
     create_points(obj, geometry, material)
     create_lines(obj, geometry, material)
-    #create_wire_faces(obj, geometry, material)
-    create_faces(obj, geometry, material)
+    
+    if wireframe:
+        create_wire_faces(obj, geometry, material)
+    else:
+        create_faces(obj, geometry, material)
 
-def explore_geometry(obj, mtl):
+def explore_geometry(obj, mtl, wireframe):
     if obj is None: return
     if mtl is None: return
     count = 0
@@ -266,17 +260,16 @@ def explore_geometry(obj, mtl):
     for geometry in obj.geometry:
         count+=1
         print(f"geometry: {count} / {size} / faces : {len(geometry.face)}")
-        create_geometry(obj, mtl, geometry)
+        create_geometry(obj, mtl, geometry, wireframe)
         
 def create_box(center, size, color):
     if center is None: return
     size /= 2
     corners = []
-
-    for dx in [-size.x, size.x]:
-        for dy in [-size.y, size.y]:
-            for dz in [-size.z, size.z]:
-                corner = center + vector(dx, dy, dz)
+    for dx in [-size[0], size[0]]:
+        for dy in [-size[1], size[1]]:
+            for dz in [-size[2], size[2]]:
+                corner = center + np.array([dx, dy, dz])
                 corners.append(corner)
 
     edges = [ (0, 1), (1, 3), (3, 2), (2, 0),  # Bottom face
@@ -284,29 +277,33 @@ def create_box(center, size, color):
               (0, 4), (1, 5), (3, 7), (2, 6) ] # Vertical edges
 
     for edge in edges:
-        create_line(corners[edge[0]], corners[edge[1]], 0.3, color)
+        create_line(corners[edge[0]], corners[edge[1]], radiusLine, color)
 
 #-------------------------------------------------------------------------------------
 
-def position_camera(aabbCenter, aabbSize, elevation, zoom, box):
-    area = [(aabbSize.y * aabbSize.z, vec(1, 0, 0)),
-            (aabbSize.y * aabbSize.x, vec(0, 0, 1))]
+def position_camera(center, size, elevation, zoom, box):
+    
+    area = [(size[1] * size[2], np.array([1, 0, 0])),
+            (size[1] * size[0], np.array([0, 0, 1]))]
+    
     largest_area_direction = sorted(area, reverse=True)[0][1]
-    distance = max(aabbSize.y, aabbSize.z)*zoom
-    pos = aabbCenter + largest_area_direction * distance
-    pos.y += distance * elevation
-    scene.camera.pos = pos
-    scene.camera.axis = aabbCenter - scene.camera.pos
-    scene.camera.range = distance
-    if box: create_box(aabbCenter, aabbSize, vector(1,0,0))
+    distance = max(size[1], size[2])*zoom
+    pos = center + largest_area_direction * distance
+    pos[1] += distance * elevation
+    
+    vp.scene.camera.pos = vector(pos)
+    vp.scene.camera.axis = vector(center) - vp.scene.camera.pos
+    vp.scene.camera.range = distance
+    
+    if box: create_box(center, size, np.array([1,0,0]))
 
 def set_light_behind_camera():
-    direction = -scene.camera.axis.norm()
-    distant_light(direction=direction, color=color.white)
+    direction = -vp.scene.camera.axis.norm()
+    vp.distant_light(direction=direction, color=vp.color.white)
 
 #-------------------------------------------------------------------------------------
 
-def load(file, box):
+def load(file, box, wireframe):
 
     obj = WavefrontOBJ()
     obj.load(file)
@@ -316,39 +313,43 @@ def load(file, box):
 
     center, size = obj.aabb()
     obj.translate(-center)
-    center = vector(0,0,0)
-
+    center = np.array([0,0,0])
+    
+    setRadiusLinePoint(size)
+    
     position_camera(center, size, 0.4, 1.5, box)
+    
     set_light_behind_camera()
     
-    explore_geometry(obj, mtl)
+    explore_geometry(obj, mtl, wireframe)
 
 #-------------------------------------------------------------------------------------
 
-def load_Wavefront(file, boundingbox):
+def load_Wavefront(file, boundingbox, wireframe):
     
-    scene.visible = False
-    scene.width = sceneWidth
-    scene.height = sceneHeight
-    scene.background = color.white
-    load(file, boundingbox)
-    scene.waitfor("textures")
-    scene.visible = True
+    vp.scene.visible = False
+    vp.scene.width = sceneWidth
+    vp.scene.height = sceneHeight
+    vp.scene.background = vp.vector(1,1,1)
+    load(file, boundingbox, wireframe)
+    vp.scene.waitfor("textures")
+    vp.scene.visible = True
 
-    while True: rate(30)
-    
+    while True: vp.rate(30)
+        
 #-------------------------------------------------------------------------------------
 
-description = 'Load and visualize 3D objects from Wavefront .obj files'
+description = 'Load and visualize 3D objects from Wavefront .obj file'
 
 def main():
     
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('filename', help='The name of the file to check')
     parser.add_argument('-b', '--boundingbox', action='store_true', help='Show bounding box')
-
+    parser.add_argument('-w', '--wireframe', action='store_true', help='Show wireframe')
+    
     if 'pydevd' in sys.modules:
-        args = parser.parse_args([loadThisObjFileInDebug])
+        args = parser.parse_args([loadThisObjFileInDebug, '-b'])
     else:
         args = parser.parse_args()
 
@@ -361,7 +362,7 @@ def main():
         print("Error: The file is not a wavefront .obj file.")
         return
 
-    load_Wavefront(args.filename, args.boundingbox)
+    load_Wavefront(args.filename, args.boundingbox, args.wireframe)
 
 if __name__ == "__main__":
      main()

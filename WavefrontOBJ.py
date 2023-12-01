@@ -7,7 +7,9 @@
 # This software is released under the MIT License.
 
 import os
-from vpython import vector
+import numpy as np
+
+vector = np.array
 
 class Face:
     def __init__(self):
@@ -70,15 +72,15 @@ class WavefrontOBJ:
 
                 elif command == 'v':  # Vertex
                     x, y, z = map(float, data[:3])
-                    self.vertex.append(vector(x, y, z))
+                    self.vertex.append(vector([x, y, z]))
 
                 elif command == 'vt':  # Texture
                     x, y = map(float, data[:2])
-                    self.texture.append(vector(x, y, 0))
+                    self.texture.append(vector([x, y, 0]))
 
                 elif command == 'vn':  # Normal
                     x, y, z = map(float, data[:3])
-                    self.normal.append(vector(x, y, z))
+                    self.normal.append(vector([x, y, z]))
 
                 elif command == 'p':  # Point
                     indices = [int(index) - 1 for index in data]
@@ -104,28 +106,24 @@ class WavefrontOBJ:
 
         self.geometry.append(geometry)
 
-    def aabb(self): #axis align bounding box
+    def aabb(self):  # axis-aligned bounding box
         if not self.vertex:
             return None
-        
-        min_coord = vector(self.vertex[0])
-        max_coord = vector(self.vertex[0])
+
+        # Convert the first vertex to a NumPy array
+        min_coord = np.array(self.vertex[0])
+        max_coord = np.array(self.vertex[0])
 
         for v in self.vertex:
-            min_coord.x = min(min_coord.x, v.x)
-            min_coord.y = min(min_coord.y, v.y)
-            min_coord.z = min(min_coord.z, v.z)
-            max_coord.x = max(max_coord.x, v.x)
-            max_coord.y = max(max_coord.y, v.y)
-            max_coord.z = max(max_coord.z, v.z)
+            min_coord = np.minimum(min_coord, v)
+            max_coord = np.maximum(max_coord, v)
 
+        # Calculate center and size
         center = (max_coord + min_coord) / 2
         size = max_coord - min_coord
 
         return center, size
-
+    
     def translate(self, translation):    
         if not self.vertex: return
-        self.vertex = [vertex + translation for vertex in self.vertex]
-
-
+        self.vertex += translation

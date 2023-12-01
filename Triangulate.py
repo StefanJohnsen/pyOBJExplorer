@@ -11,7 +11,7 @@
 #
 # This software is released under the MIT License.
 
-from vpython import vector, cross, dot, mag
+import numpy as np
 from enum import Enum
 
 epsilon = 1e-6
@@ -23,12 +23,12 @@ class TurnDirection(Enum):
 
 class Triangle:
     def __init__(self, p0, p1, p2):
-        self.p0 = p0
-        self.p1 = p1
-        self.p2 = p2
+        self.p0 = np.array(p0)
+        self.p1 = np.array(p1)
+        self.p2 = np.array(p2)
 
 def turn(p, u, n, q):
-    d = dot(cross(q - p, u), n)
+    d = np.dot(np.cross(q - p, u), n)
 
     if d > 0.0:
         return TurnDirection.Right
@@ -38,27 +38,27 @@ def turn(p, u, n, q):
         return TurnDirection.NoTurn
 
 def triangleAreaSquared(a, b, c):
-    c = cross(b - a, c - a)
-    return mag(c)**2 / 4.0
+    c = np.cross(b - a, c - a)
+    return np.linalg.norm(c)**2 / 4.0
 
 def normalize(v):
-    m = mag(v)
-    return v / m if m != 0 else vector(0, 0, 0)
+    m = np.linalg.norm(v)
+    return v / m if m != 0 else np.array([0, 0, 0])
 
 def normal(polygon):
     n = len(polygon)
-    v = vector(0, 0, 0)
+    v = np.array([0, 0, 0])
 
     if n < 3:
         return v
 
     for index in range(n):
-        item = polygon[index % n]
-        next = polygon[(index + 1) % n]
+        item = np.array(polygon[index % n])
+        next_item = np.array(polygon[(index + 1) % n])
 
-        v.x += (next.y - item.y) * (next.z + item.z)
-        v.y += (next.z - item.z) * (next.x + item.x)
-        v.z += (next.x - item.x) * (next.y + item.y)
+        v[0] += (next_item[1] - item[1]) * (next_item[2] + item[2])
+        v[1] += (next_item[2] - item[2]) * (next_item[0] + item[0])
+        v[2] += (next_item[0] - item[0]) * (next_item[1] + item[1])
 
     return normalize(v)
 
@@ -69,11 +69,11 @@ def getBarycentricTriangleCoordinates(a, b, c, p):
     v1 = b - a
     v2 = p - a
 
-    dot00 = dot(v0, v0)
-    dot01 = dot(v0, v1)
-    dot02 = dot(v0, v2)
-    dot11 = dot(v1, v1)
-    dot12 = dot(v1, v2)
+    dot00 = np.dot(v0, v0)
+    dot01 = np.dot(v0, v1)
+    dot02 = np.dot(v0, v2)
+    dot11 = np.dot(v1, v1)
+    dot12 = np.dot(v1, v2)
 
     denom = dot00 * dot11 - dot01 * dot01
 
@@ -103,20 +103,21 @@ def isEar(index, polygon, normal):
     itemIndex = index % n
     nextIndex = (index + 1) % n
 
-    prev = polygon[prevIndex]
-    item = polygon[itemIndex]
-    next = polygon[nextIndex]
+    prev = np.array(polygon[prevIndex])
+    item = np.array(polygon[itemIndex])
+    next_item = np.array(polygon[nextIndex])
 
     u = normalize(item - prev)
 
-    if turn(prev, u, normal, next) != TurnDirection.Right:
+    if turn(prev, u, normal, next_item) != TurnDirection.Right:
         return False
 
     for i in range(n):
         if i in (prevIndex, itemIndex, nextIndex):
             continue
 
-        if pointInsideOrEdgeTriangle(prev, item, next, polygon[i]):
+        p = np.array(polygon[i])
+        if pointInsideOrEdgeTriangle(prev, item, next_item, p):
             return False
 
     return True
@@ -135,11 +136,11 @@ def getBiggestEar(polygon, normal):
 
     for index in range(n):
         if isEar(index, polygon, normal):
-            prev = polygon[(index - 1 + n) % n]
-            item = polygon[index % n]
-            next = polygon[(index + 1) % n]
+            prev = np.array(polygon[(index - 1 + n) % n])
+            item = np.array(polygon[index % n])
+            next_item = np.array(polygon[(index + 1) % n])
 
-            area = triangleAreaSquared(prev, item, next)
+            area = triangleAreaSquared(prev, item, next_item)
 
             if area > maxArea:
                 maxIndex = index
@@ -159,9 +160,9 @@ def convex(polygon, normal):
     polygonTurn = TurnDirection.NoTurn
 
     for index in range(n):
-        prev = polygon[(index - 1 + n) % n]
-        item = polygon[index % n]
-        next_item = polygon[(index + 1) % n]
+        prev = np.array(polygon[(index - 1 + n) % n])
+        item = np.array(polygon[index % n])
+        next_item = np.array(polygon[(index + 1) % n])
 
         u = normalize(item - prev)
         item_turn = turn(prev, u, normal, next_item)
@@ -186,17 +187,15 @@ def clockwiseOriented(polygon, normal):
     orientationSum = 0.0
 
     for index in range(n):
-        prev = polygon[(index - 1 + n) % n]
-        item = polygon[index % n]
-        next = polygon[(index + 1) % n]
+        prev = np.array(polygon[(index - 1 + n) % n])
+        item = np.array(polygon[index % n])
+        next_item = np.array(polygon[(index + 1) % n])
 
         edge = item - prev
+        toNextPoint = next_item - item
 
-        toNextPoint = next - item
-
-        v = cross(edge, toNextPoint)
-
-        orientationSum += dot(v, normal)
+        v = np.cross(edge, toNextPoint)
+        orientationSum += np.dot(v, normal)
 
     return orientationSum < 0.0
 
@@ -207,11 +206,10 @@ def makeClockwiseOrientation(polygon, normal):
     if not clockwiseOriented(polygon, normal):
         polygon.reverse()
 
-
 def fanTriangulation(polygon):
     triangles = []
     for index in range(1, len(polygon) - 1):
-        triangles.append(Triangle(polygon[0], polygon[index], polygon[index + 1]))
+        triangles.append(Triangle(np.array(polygon[0]), np.array(polygon[index]), np.array(polygon[index + 1])))
     return triangles
 
 def cutTriangulation(polygon, normal):
@@ -226,11 +224,11 @@ def cutTriangulation(polygon, normal):
 
         n = len(polygon)
 
-        prev = polygon[(index - 1 + n) % n]
-        item = polygon[index % n]
-        next = polygon[(index + 1) % n]
+        prev = np.array(polygon[(index - 1 + n) % n])
+        item = np.array(polygon[index % n])
+        next_item = np.array(polygon[(index + 1) % n])
 
-        triangles.append(Triangle(prev, item, next))
+        triangles.append(Triangle(prev, item, next_item))
 
         del polygon[index]
 
@@ -244,7 +242,7 @@ def triangulate(polygon):
         return []
 
     if len(polygon) == 3:
-        return [Triangle(polygon[0], polygon[1], polygon[2])]
+        return [Triangle(np.array(polygon[0]), np.array(polygon[1]), np.array(polygon[2]))]
 
     n = normal(polygon)
 
