@@ -8,7 +8,40 @@
 #
 # This software is released under the MIT License.
 
-from vpython import *
+import atexit
+import functools
+import contextlib
+ 
+ #-------------------------------------------------------------------------------------
+ # import VPython without getting ZeroDivisionError at termination
+ #-------------------------------------------------------------------------------------
+
+def register():
+    _atexit_register = atexit.register
+     
+    def register(func, *args, **kwargs):
+        if func.__name__ == 'Exit':
+            @functools.wraps(func)
+            def wrapper(*args, **kwargs):
+                with contextlib.suppress(ZeroDivisionError):
+                    return func(*args, **kwargs)
+            _atexit_register(wrapper, *args, **kwargs)
+        else:
+            _atexit_register(func, *args, **kwargs)
+        return func
+    register.old = _atexit_register
+    return register
+     
+register = register()
+atexit.register = register
+try:
+    from vpython import *
+finally:
+    atexit.register = register.old
+    del register
+
+#-------------------------------------------------------------------------------------    
+
 from WavefrontOBJ import WavefrontOBJ
 from WavefrontMTL import WavefrontMTL
 
@@ -16,7 +49,7 @@ import os
 import sys
 import argparse
 import Triangulate
-
+    
 #-------------------------------------------------------------------------------------
 
 sceneWidth = 1470          # Adjust the width as needed
@@ -293,6 +326,7 @@ def load(file, box):
 #-------------------------------------------------------------------------------------
 
 def load_Wavefront(file, boundingbox):
+    
     scene.visible = False
     scene.width = sceneWidth
     scene.height = sceneHeight
@@ -301,13 +335,14 @@ def load_Wavefront(file, boundingbox):
     scene.waitfor("textures")
     scene.visible = True
 
-    while True: pass
-
+    while True: rate(30)
+    
 #-------------------------------------------------------------------------------------
 
 description = 'Load and visualize 3D objects from Wavefront .obj files'
 
 def main():
+    
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('filename', help='The name of the file to check')
     parser.add_argument('-b', '--boundingbox', action='store_true', help='Show bounding box')
@@ -315,7 +350,7 @@ def main():
     if 'pydevd' in sys.modules:
         args = parser.parse_args([loadThisObjFileInDebug])
     else:
-        args = parser.parse_args()
+        args = parser.parse_args([loadThisObjFileInDebug])
 
     if not os.path.isfile(args.filename):
         print(f"Error: The file {args.filename} does not exist.")
@@ -329,7 +364,7 @@ def main():
     load_Wavefront(args.filename, args.boundingbox)
 
 if __name__ == "__main__":
-    main()
-
-
-
+     main()
+    
+    
+    
