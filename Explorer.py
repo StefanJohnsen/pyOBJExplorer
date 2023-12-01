@@ -350,7 +350,7 @@ def main():
     if 'pydevd' in sys.modules:
         args = parser.parse_args([loadThisObjFileInDebug])
     else:
-        args = parser.parse_args([loadThisObjFileInDebug])
+        args = parser.parse_args()
 
     if not os.path.isfile(args.filename):
         print(f"Error: The file {args.filename} does not exist.")
