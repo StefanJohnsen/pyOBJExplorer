@@ -8,13 +8,13 @@
 #
 # This software is released under the MIT License.
 
+#-------------------------------------------------------------------------------------
+# import VPython without getting ZeroDivisionError at termination
+#-------------------------------------------------------------------------------------
+
 import atexit
 import functools
 import contextlib
- 
- #-------------------------------------------------------------------------------------
- # import VPython without getting ZeroDivisionError at termination
- #-------------------------------------------------------------------------------------
 
 def register():
     _atexit_register = atexit.register
