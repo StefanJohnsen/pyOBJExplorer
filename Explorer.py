@@ -11,6 +11,7 @@
 
 import vpythonex as vp                   # import a wrapper to avoid ZeroDivisionError 
 
+import MapTextures as map
 #-------------------------------------------------------------------------------------    
 
 from WavefrontOBJ import *
@@ -27,7 +28,7 @@ import numpy as np
 sceneWidth = 1470          # Adjust the width as needed
 sceneHeight = 720          # Adjust the height as needed
 
-loadThisObjFileInDebug = 'c:\\temp\\drill.obj'
+loadThisObjFileInDebug = 'c:\\temp\\rubikcube.obj'
 
 #-------------------------------------------------------------------------------------
 
@@ -36,7 +37,7 @@ radiusPoint = 0.01
 
 def setRadiusLinePoint(aabbSize):
     global radiusLine, radiusPoint
-    radiusLine = max(aabbSize[0], aabbSize[1], aabbSize[2]) / 1000
+    radiusLine = np.linalg.norm(aabbSize) / 1000
     radiusPoint = radiusLine
 
 #-------------------------------------------------------------------------------------
@@ -130,6 +131,11 @@ def create_wire_face(vertices, radius, color):
     return face
 
 #-------------------------------------------------------------------------------------
+def getcwd_texture(texture):
+    if texture is None: return None
+    if os.path.exists(texture):
+       return os.path.basename(texture)
+    return None
 
 def create_points(obj, geometry, material):
     if geometry.point is None: return
@@ -167,6 +173,7 @@ def create_faces(obj, geometry, material):
 
     color = material.color()
     texture = material.texture()
+    texture = getcwd_texture(texture)
 
     for face in geometry.face:
         if face is None: continue
@@ -321,6 +328,8 @@ def load(file, box, wireframe):
     
     set_light_behind_camera()
     
+    map.setupVPythonTextureFiles(mtl)
+    
     explore_geometry(obj, mtl, wireframe)
 
 #-------------------------------------------------------------------------------------
@@ -335,7 +344,7 @@ def load_Wavefront(file, boundingbox, wireframe):
     vp.scene.waitfor("textures")
     vp.scene.visible = True
 
-    while True: pass
+    while True: vp.rate(30)
         
 #-------------------------------------------------------------------------------------
 

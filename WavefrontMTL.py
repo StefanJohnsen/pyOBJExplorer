@@ -7,7 +7,6 @@
 # This software is released under the MIT License.
 
 import os
-import shutil
 import numpy as np
 
 vector = np.array
@@ -15,10 +14,10 @@ vector = np.array
 class Material:
     def __init__(self):
         self.name = None                    # Material name
-        self.Kd = vector([0.5, 0.5, 0.5])     # Default diffuse color
-        self.Ka = vector([0.0, 0.0, 0.0])     # Default ambient color
-        self.Ks = vector([0.0, 0.0, 0.0])     # Default specular color
-        self.Ke = vector([0.0, 0.5, 0.0])     # Default emission color
+        self.Kd = vector([0.5, 0.5, 0.5])   # Default diffuse color
+        self.Ka = vector([0.0, 0.0, 0.0])   # Default ambient color
+        self.Ks = vector([0.0, 0.0, 0.0])   # Default specular color
+        self.Ke = vector([0.0, 0.5, 0.0])   # Default emission color
         self.Ns = 0.0                       # Default specular exponent
         self.Ni = 1.0                       # Default optical density
         self.d = 1.0                        # Default dissolve
@@ -32,74 +31,35 @@ class Material:
     def color(self): return self.Kd
     def opacity(self): return self.d
     def shininess(self): return self.Ns
-    def texture(self, basename = True):
-        if self.map_Kd is None: return None
-        if basename: return os.path.basename(self.map_Kd)
-        return self.map_Kd
+    def texture(self): return self.map_Kd
 
-def copyFile(file):
+def mtlFile(file):
     if file is None: return None
-    if not os.path.exists(file): return
-    directory = os.getcwd()
-    basename = os.path.basename(file)
-    copyfile = os.path.join(directory, basename)
-    if os.path.exists(copyfile): return
-    if file.lower() == copyfile.lower(): return
-    shutil.copy(file, copyfile)
-
-def deleteFile(file):
-    if file is None: return None
-    if not os.path.exists(file): return
-    directory = os.getcwd()
-    basename = os.path.basename(file)
-    copyfile = os.path.join(directory, basename)
-    if not os.path.exists(copyfile): return
-    if file.lower() == copyfile.lower(): return
-    os.remove(copyfile)
+    directory, basename = os.path.split(file)
+    if not directory: directory = os.getcwd()
+    name, ext = os.path.splitext(basename)
+    if ext.lower() == '.obj': ext = '.mtl'
+    file = os.path.join(directory, name + ext)
+    return file
 
 class WavefrontMTL:
     def __init__(self):
-        self.materials = [] #List of materials
-        self.delteTextures = False
+        self.materials = []
+    
+    def load(self, file):
 
-    def copy_textures(self):
-        for material in self.materials:
-            copyFile(material.map_Kd)
-            copyFile(material.map_Ka)
-            copyFile(material.map_Ks)
-            copyFile(material.map_Ns)
-            copyFile(material.map_d)
-
-    def delete_textures(self):
-        for material in self.materials:
-            deleteFile(material.map_Kd)
-            deleteFile(material.map_Ka)
-            deleteFile(material.map_Ks)
-            deleteFile(material.map_Ns)
-            deleteFile(material.map_d)
-
-    def __del__(self):
-        if self.delteTextures:
-            self.delete_textures()
-
-    def load(self, fname):
-
-        if fname is None: return
-
-        directory, filename = os.path.split(fname)
-        if not directory: directory = os.getcwd()
-        base, ext = os.path.splitext(filename)
-        if ext.lower() == '.obj': ext = '.mtl'
-        fname = os.path.join(directory, base + ext)
+        file = mtlFile(file)
         
-        if not os.path.exists(fname):
-            print(f"mtl file not found: {fname}")
+        if not os.path.exists(file):
+            print(f"mtl file not found: {file}")
             return
+
+        directory = os.path.dirname(file)
 
         material = Material()
 
-        with open(fname) as file:
-            for line in file:
+        with open(file) as buffer:
+            for line in buffer:
                 line = line.strip()
                 
                 if not line: continue
@@ -108,7 +68,7 @@ class WavefrontMTL:
                 command = words[0]
                 data = words[1:]
 
-                if command == 'newmtl':  # New material
+                if command == 'newmtl':
                     if material.name != None:
                         self.materials.append(material)
                     material = Material()
@@ -143,11 +103,6 @@ class WavefrontMTL:
         if material is not None:
             self.materials.append(material)
         
-        self.copy_textures()
-            
-        if directory.lower() != os.getcwd().lower():
-            self.delteTextures = True
-
     def material(self, name):
         for material in self.materials:
             if material.name == name:

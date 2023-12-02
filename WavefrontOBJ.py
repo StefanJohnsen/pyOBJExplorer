@@ -127,3 +127,15 @@ class WavefrontOBJ:
     def translate(self, translation):    
         if not self.vertex: return
         self.vertex += translation
+
+    def geometries(self):
+        geometries = {}
+        for geometry in self.geometry:
+            if geometry.material not in geometries:
+                geometries[geometry.material] = Geometry()
+                geometries[geometry.material].material = geometry.material
+            geometries[geometry.material].face.extend(geometry.face)
+            geometries[geometry.material].point.extend(geometry.point)
+            geometries[geometry.material].line.extend(geometry.line)
+
+        return geometries
