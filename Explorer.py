@@ -160,7 +160,7 @@ def create_wire_faces(obj, geometry, material):
         for i in face.vertex:
             v = obj.vertex[i]
             face_vertex.append(v)
-        create_wire_face(face_vertex, radiusLine, material.color())
+        create_wire_face(face_vertex, radiusLine, np.array([0.5, 0.5, 0.5]))
 
 def create_faces(obj, geometry, material):
     if geometry.face is None: return
