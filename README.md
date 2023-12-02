@@ -11,6 +11,13 @@ Ideal for students, designers, and enthusiasts in 3D modeling, pyOBJExplorer is 
 - `WavefrontMTL.py` A standalone parser for MTL files, also usable independently in various projects.
 - `Triangulate.py` Used for converting polygon faces in OBJ files into triangles through fan and earcut triangulation techniques.
 
+### Dependencies
+- os
+- sys
+- numpy
+- vpython
+- atexit
+  
 # Visualization
 [VPython](https://pypi.org/project/vpython/) is required to use `Explorer.py`
 ```
