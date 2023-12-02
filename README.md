@@ -41,7 +41,7 @@ python Explorer.py -w .\objFiles\rubikcube.obj
 python Explorer.py -b .\objFiles\drill.obj
 ```
 ![rubikcube](https://github.com/StefanJohnsen/pyOBJExplorer/blob/main/objFiles/drill-box.png)
-<br>*Drill with standard color and axis align bounding box*
+<br>*Drill with texture and axis align bounding box*
 
 # VPython Controls Guide
 
