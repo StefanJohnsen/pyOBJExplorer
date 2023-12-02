@@ -13,8 +13,8 @@ import vpythonex as vp                   # import a wrapper to avoid ZeroDivisio
 
 #-------------------------------------------------------------------------------------    
 
-from WavefrontOBJ import WavefrontOBJ
-from WavefrontMTL import WavefrontMTL
+from WavefrontOBJ import *
+from WavefrontMTL import *
 
 import os
 import sys
@@ -335,7 +335,7 @@ def load_Wavefront(file, boundingbox, wireframe):
     vp.scene.waitfor("textures")
     vp.scene.visible = True
 
-    while True: vp.rate(30)
+    while True: pass
         
 #-------------------------------------------------------------------------------------
 
