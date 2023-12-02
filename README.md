@@ -38,7 +38,7 @@ python Explorer.py -w .\objFiles\rubikcube.obj
 ![rubikcube](https://github.com/StefanJohnsen/pyOBJExplorer/blob/main/objFiles/rubikcube-wire.png)
 <br>*Rubik's cube with wireframe*
 ```
-python Explorer.py -w .\objFiles\drill.obj
+python Explorer.py -b .\objFiles\drill.obj
 ```
 ![rubikcube](https://github.com/StefanJohnsen/pyOBJExplorer/blob/main/objFiles/drill-box.png)
 <br>*Drill with standard color and axis align bounding box*
