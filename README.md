@@ -1,104 +1,47 @@
 # pyOBJExplorer
-Embrace the power of Python and VPython with pyOBJExplorer, a tool designed for parsing and visualizing Wavefront OBJ and MTL files.<br><br>
-This solution gives the flexibility of Python and the graphical capabilities of VPython to offer a dynamic, interactive experience in exploring 3D models. Whether it's for educational purposes, design visualization, or simply for exploring the world of 3D graphics, pyOBJExplorer provides an intuitive and easy solution for users to delve into the details of textures, materials, and geometries in OBJ files. <br><br>
-Ideal for students, designers, and enthusiasts in 3D modeling, pyOBJExplorer is a nice tool to experiencing 3D models.
 
-![OBJExplorer](https://github.com/StefanJohnsen/OBJExplorer/blob/main/objFiles/explorer.png)
+Explore 3D visualization of Wavefront OBJ models with [pyOBJParser](https://github.com/StefanJohnsen/pyOBJParser), a showcase of how to integrate VPython and pyOBJParser. pyOBJExplorer offers an intuitive and straightforward solution, allowing users to delve into the intricate details of textures, materials, and geometries within OBJ files. Ideal for students, designers, and 3D modeling enthusiasts, pyOBJExplorer is an excellent tool for experiencing and interacting with 3D models in a user-friendly environment.
+
+![OBJExplorer](https://github.com/StefanJohnsen/pyOBJExplorer/blob/main/objFiles/explorer.png)
 
 ### Following files is included
 - `Explorer.py` The main file to run. It can also be executed from the command line with a specified OBJ file.
-- `WavefrontOBJ.py` A standalone parser for OBJ files, which can be utilized in other contexts.
-- `WavefrontMTL.py` A standalone parser for MTL files, also usable independently in various projects.
+- `WavefrontOBJ.py` A standalone parser for OBJ files (a copy from : [pyOBJParser](https://github.com/StefanJohnsen/pyOBJParser))
+- `WavefrontMTL.py` A standalone parser for MTL files (a copy from : [pyOBJParser](https://github.com/StefanJohnsen/pyOBJParser))
 - `Triangulate.py` Used for converting polygon faces in OBJ files into triangles through fan and earcut triangulation techniques.
 
 ### Dependencies
 - os
 - sys
 - numpy
-- vpython
+- [vpython](https://pypi.org/project/vpython/)
 - atexit
   
-# Visualization
-[VPython](https://pypi.org/project/vpython/) is required to use `Explorer.py`
+# Install vpython
 ```
 pip install vpython
 ```
-After successfully installing VPython and cloning this repository, you can proceed to test it. Simply copy an OBJ file into the cloned directory and then run the relevant script to see the results.
-```
-python explorer.py test.obj
-```
 
-# OBJ Data Parsing Capabilities
+# Usage
 
-The pyOBJExplorer's OBJ parser is processing a wide range of data encapsulated within Wavefront OBJ files. It reads vertices, texture coordinates, normals and geometrical elements like points, lines, faces. Notably, it is capable of interpreting all types of faces, including triangles, quads, and more complex polygons (with both positive and negative indices).
-
-Here are some sample formats of faces that OBJ parser can interpret:
+From the command line, simply enter 'explorer.py' followed by the file name.<br>
+Please ensure to close the browser upon completion to restore command line control.
 
 ```
-# Triangle
-f 1 2 3 
-f 1//1 2//2 3//3 # triangle with vertex and normal
-f 1/1/1 2/2/2 3/3/3 # triangle with vertex, texture and normal
-
-# Quad
-f 1 2 3 4
-f 1//1 2//2 3//3 4//4 # quad with vertex and normal
-f 1/1/1 2/2/2 3/3/3 4/4/4 # quad with vertex, texture and normal
-
-# Polygon
-f 1 2 3 4 5 6 ....
-f 1//1 2//2 3//3 4//4 5//5 6//6 ... # polygon with vertex and normal
-f 1/1/1 2/2/2 3/3/3 4/4/4 5/5/5 6/6/6 ... # polygon with vertex, texture and normal
-
-# Also negative indices is supported
+python Explorer.py .\objFiles\rubikcube.obj
 ```
-
-# MTL Data Parsing Capabilities
-
-The pyOBJExplorer's MTL parser is designed to handle the most common material data found in Wavefront MTL files, providing essential functionality for 3D model materials. For those who require additional data types, the parser's code is straightforward and user-friendly, making it easy to understand and extend as needed.
-
-Following material data is supported:
-
+![rubikcube](https://github.com/StefanJohnsen/pyOBJExplorer/blob/main/objFiles/rubikcube.png)
+<br>*Rubik's cube with standard color*
 ```
-newmtl Material
-Kd 0.5 0.5 0.5
-Ka 0.0 0.0 0.0
-Ks 0.5 0.5 0.5
-Ke 0.0 0.0 0.0
-Ns 168.89702
-Ni 1.0
-d 1.0
-illum 2
-map_Kd pic1.jpg
-map_Ka pic2.jpg
-map_Ks pic3.jpg
-map_Ns pic4.jpg
-map_d pic5.jpg
+python Explorer.py -w .\objFiles\rubikcube.obj
 ```
-
-# How to Get Started
-
-To begin using the pyOBJExplorer, start by examining the Explore.py script. This script is the heart of the operation. To set everything up, you'll need just a few lines of code:
-
+![rubikcube](https://github.com/StefanJohnsen/pyOBJExplorer/blob/main/objFiles/rubikcube-wire.png)
+<br>*Rubik's cube with wireframe*
 ```
-from vpython import *
-from WavefrontOBJ import WavefrontOBJ
-from WavefrontMTL import WavefrontMTL
-import Triangulate
-
-# Create an instance of the WavefrontOBJ parser
-obj = WavefrontOBJ()
-# Load your OBJ file
-obj.load(file)
-
-# Create an instance of the WavefrontMTL parser
-mtl = WavefrontMTL()
-# Load the associated MTL file
-mtl.load(obj.mtllib)
-
-# Now, explore the geometry of your OBJ file with the loaded materials
-explore_geometry(obj, mtl)
+python Explorer.py -w .\objFiles\drill.obj
 ```
+![rubikcube](https://github.com/StefanJohnsen/pyOBJExplorer/blob/main/objFiles/drill-box.png)
+<br>*Drill with standard color and axis align bounding box*
 
 # VPython Controls Guide
 
