@@ -293,7 +293,7 @@ def position_camera(center, size, elevation, zoom, box):
     area = [(size[1] * size[2], np.array([1, 0, 0])),
             (size[1] * size[0], np.array([0, 0, 1]))]
     
-    largest_area_direction = sorted(area, reverse=True)[0][1]
+    largest_area_direction = max(area, key=lambda x: x[0])[1]
     distance = max(size[1], size[2])*zoom
     pos = center + largest_area_direction * distance
     pos[1] += distance * elevation

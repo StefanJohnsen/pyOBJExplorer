@@ -23,9 +23,9 @@ class TurnDirection(Enum):
 
 class Triangle:
     def __init__(self, p0, p1, p2):
-        self.p0 = np.array(p0)
-        self.p1 = np.array(p1)
-        self.p2 = np.array(p2)
+        self.p0 = p0.copy()
+        self.p1 = p1.copy()
+        self.p2 = p2.copy()
 
 def turn(p, u, n, q):
     d = np.dot(np.cross(q - p, u), n)
@@ -53,8 +53,8 @@ def normal(polygon):
         return v
 
     for index in range(n):
-        item = np.array(polygon[index % n])
-        next = np.array(polygon[(index + 1) % n])
+        item = polygon[index % n]
+        next = polygon[(index + 1) % n]
 
         v[0] += (next[1] - item[1]) * (next[2] + item[2])
         v[1] += (next[2] - item[2]) * (next[0] + item[0])
@@ -103,9 +103,9 @@ def isEar(index, polygon, normal):
     itemIndex = index % n
     nextIndex = (index + 1) % n
 
-    prev = np.array(polygon[prevIndex])
-    item = np.array(polygon[itemIndex])
-    next = np.array(polygon[nextIndex])
+    prev = polygon[prevIndex]
+    item = polygon[itemIndex]
+    next = polygon[nextIndex]
 
     u = normalize(item - prev)
 
@@ -116,7 +116,8 @@ def isEar(index, polygon, normal):
         if i in (prevIndex, itemIndex, nextIndex):
             continue
 
-        p = np.array(polygon[i])
+        p = polygon[i]
+        
         if pointInsideOrEdgeTriangle(prev, item, next, p):
             return False
 
@@ -136,9 +137,9 @@ def getBiggestEar(polygon, normal):
 
     for index in range(n):
         if isEar(index, polygon, normal):
-            prev = np.array(polygon[(index - 1 + n) % n])
-            item = np.array(polygon[index % n])
-            next = np.array(polygon[(index + 1) % n])
+            prev = polygon[(index - 1 + n) % n]
+            item = polygon[index % n]
+            next = polygon[(index + 1) % n]
 
             area = triangleAreaSquared(prev, item, next)
 
@@ -160,9 +161,9 @@ def convex(polygon, normal):
     polygonTurn = TurnDirection.NoTurn
 
     for index in range(n):
-        prev = np.array(polygon[(index - 1 + n) % n])
-        item = np.array(polygon[index % n])
-        next = np.array(polygon[(index + 1) % n])
+        prev = polygon[(index - 1 + n) % n]
+        item = polygon[index % n]
+        next = polygon[(index + 1) % n]
 
         u = normalize(item - prev)
         item_turn = turn(prev, u, normal, next)
@@ -187,9 +188,9 @@ def clockwiseOriented(polygon, normal):
     orientationSum = 0.0
 
     for index in range(n):
-        prev = np.array(polygon[(index - 1 + n) % n])
-        item = np.array(polygon[index % n])
-        next = np.array(polygon[(index + 1) % n])
+        prev = polygon[(index - 1 + n) % n]
+        item = polygon[index % n]
+        next = polygon[(index + 1) % n]
 
         edge = item - prev
         toNextPoint = next - item
@@ -209,7 +210,7 @@ def makeClockwiseOrientation(polygon, normal):
 def fanTriangulation(polygon):
     triangles = []
     for index in range(1, len(polygon) - 1):
-        triangles.append(Triangle(np.array(polygon[0]), np.array(polygon[index]), np.array(polygon[index + 1])))
+        triangles.append(Triangle(polygon[0], polygon[index], polygon[index + 1]))
     return triangles
 
 def cutTriangulation(polygon, normal):
@@ -224,9 +225,9 @@ def cutTriangulation(polygon, normal):
 
         n = len(polygon)
 
-        prev = np.array(polygon[(index - 1 + n) % n])
-        item = np.array(polygon[index % n])
-        next = np.array(polygon[(index + 1) % n])
+        prev = polygon[(index - 1 + n) % n]
+        item = polygon[index % n]
+        next = polygon[(index + 1) % n]
 
         triangles.append(Triangle(prev, item, next))
 
@@ -239,10 +240,7 @@ def cutTriangulation(polygon, normal):
 
 def triangulate(polygon):
     if len(polygon) < 3:
-        return []
-
-    if len(polygon) == 3:
-        return [Triangle(np.array(polygon[0]), np.array(polygon[1]), np.array(polygon[2]))]
+        return [], np.array([0,0,0])
 
     n = normal(polygon)
 
