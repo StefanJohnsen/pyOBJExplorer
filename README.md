@@ -10,8 +10,8 @@ Explore 3D visualization of Wavefront OBJ models with [pyOBJParser](https://gith
 
 ### Following files is included
 - `Explorer.py` The main file to run. It can also be executed from the command line with a specified OBJ file.
-- `WavefrontOBJ.py` A standalone parser for OBJ files (a copy from : [pyOBJParser](https://github.com/StefanJohnsen/pyOBJParser))
-- `WavefrontMTL.py` A standalone parser for MTL files (a copy from : [pyOBJParser](https://github.com/StefanJohnsen/pyOBJParser))
+- `WavefrontOBJ.py` Source: [pyOBJParser](https://github.com/StefanJohnsen/pyOBJParser)
+- `WavefrontMTL.py` Source: [pyOBJParser](https://github.com/StefanJohnsen/pyOBJParser)
 - `Triangulate.py` Used for converting polygon faces in OBJ files into triangles through fan and earcut triangulation techniques.
 
 ### Dependencies
