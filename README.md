@@ -1,6 +1,6 @@
 # pyOBJExplorer
 
-Explore 3D visualization of Wavefront OBJ models with [pyOBJParser](https://github.com/StefanJohnsen/pyOBJParser), a showcase of how to integrate VPython and pyOBJParser. pyOBJExplorer offers an intuitive and straightforward solution, allowing users to delve into the intricate details of textures, materials, and geometries within OBJ files. Ideal for students, designers, and 3D modeling enthusiasts, pyOBJExplorer is an excellent tool for experiencing and interacting with 3D models in a user-friendly environment.
+Explore 3D visualization of Wavefront OBJ models with [pyOBJParser](https://github.com/StefanJohnsen/pyOBJParser), a showcase of how to integrate VPython and pyOBJParser. pyOBJExplorer offers an intuitive and straightforward solution, allowing users to delve into the intricate details of textures, materials, and geometries within OBJ files.
 
 # VPython (Visual Python)
 [VPython](https://en.wikipedia.org/wiki/VPython) is a lightweight and simple Python library for creating interactive 3D visualizations and simulations, often used in education to teach concepts like physics and computer science through hands-on 3D experiences. Testing Wavefront OBJ files larger than 10 MB for simulation is not recommended.
