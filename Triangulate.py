@@ -11,6 +11,7 @@
 #
 # This software is released under the MIT License.
 
+import math
 import numpy as np
 from enum import Enum
 
@@ -21,36 +22,111 @@ class TurnDirection(Enum):
     Left = -1
     NoTurn = 0
 
+class Point:
+           
+    def __init__(self, p, i=None):
+        
+        if not isinstance(p, np.ndarray):
+            raise ValueError("Point only supports ndarray")
+                    
+        self.p = p
+        self.i = i
+
+    def __getitem__(self, index):
+        return self.p[index]
+
+    def __setitem__(self, index, value):
+        self.p[index] = value
+                            
+    def __add__(self, other):
+        if isinstance(other, Point):
+            return Point(self.p + other.p)
+        else:
+            raise ValueError("Addition is only supported between Point objects.")
+
+    def __sub__(self, other):
+        if isinstance(other, Point):
+            return Point(self.p - other.p)
+        else:
+            raise ValueError("Subtraction is only supported between Point objects.")
+
+    def __mul__(self, scalar):
+        if isinstance(scalar, (float)):
+            self.p *= scalar
+            return self.p
+        else:
+            raise ValueError("Multiplication is only supported with scalar values.")
+
+    def __truediv__(self, scalar):
+        if isinstance(scalar, (float)):
+            if scalar == 0.0:
+                return Point.zero()
+            self.p /= scalar
+            return self.p
+        else:
+            raise ValueError("Division is only supported with scalar values.")
+
+    def __eq__(self, other):
+        if other is None: return False
+        if np.abs(self.p[0] - other.p[0]) > epsilon: return False
+        if np.abs(self.p[1] - other.p[1]) > epsilon: return False
+        if np.abs(self.p[2] - other.p[2]) > epsilon: return False
+        return True
+         
+    def copy(self):
+        return Point(self.p.copy(), self.i)
+            
+    @classmethod
+    def zero(cls):
+        return cls(np.array([0.0, 0.0, 0.0]))
+    
+def dot(u, v):
+    dx = u[0] * v[0]
+    dy = u[1] * v[1]
+    dz = u[2] * v[2]
+    return dx + dy + dz
+
+def cross(u, v):
+    x = u[1] * v[2] - u[2] * v[1]
+    y = u[2] * v[0] - u[0] * v[2]
+    z = u[0] * v[1] - u[1] * v[0]
+    return Point(np.array([x, y, z]))
+
+def length(u):
+    sx = u[0] * u[0]
+    sy = u[1] * u[1]
+    sz = u[2] * u[2]
+    return math.sqrt(sx + sy + sz)
+    
 class Triangle:
     def __init__(self, p0, p1, p2):
-        self.p0 = p0.copy()
-        self.p1 = p1.copy()
-        self.p2 = p2.copy()
+        self.p0 = p0
+        self.p1 = p1
+        self.p2 = p2
 
 def turn(p, u, n, q):
-    d = np.dot(np.cross(q - p, u), n)
+   
+    v = cross(q.p - p.p, u)
+     
+    d = dot(v, n)
 
-    if d > 0.0:
-        return TurnDirection.Right
-    elif d < 0.0:
-        return TurnDirection.Left
-    else:
-        return TurnDirection.NoTurn
+    if d > +0.001: return TurnDirection.Right
+    if d < -0.001: return TurnDirection.Left
+
+    return TurnDirection.NoTurn
 
 def triangleAreaSquared(a, b, c):
-    c = np.cross(b - a, c - a)
-    return np.linalg.norm(c)**2 / 4.0
+    c = cross(b.p - a.p, c.p - a.p)
+    return length(c)**2.0 / 4.0
 
 def normalize(v):
-    m = np.linalg.norm(v)
-    return v / m if m != 0 else np.array([0, 0, 0])
+    return v/length(v)
 
 def normal(polygon):
     n = len(polygon)
-    v = np.array([0, 0, 0])
+    v = Point.zero()
 
-    if n < 3:
-        return v
+    if n < 3: return v
 
     for index in range(n):
         item = polygon[index % n]
@@ -60,20 +136,24 @@ def normal(polygon):
         v[1] += (next[2] - item[2]) * (next[0] + item[0])
         v[2] += (next[0] - item[0]) * (next[1] + item[1])
 
+    if np.abs(v[0]) < epsilon: v[0] = 0.0
+    if np.abs(v[1]) < epsilon: v[1] = 0.0
+    if np.abs(v[2]) < epsilon: v[2] = 0.0
+
     return normalize(v)
 
 def getBarycentricTriangleCoordinates(a, b, c, p):
-    alpha = beta = gamma = -2 * epsilon
+    alpha = beta = gamma = -2.0 * epsilon
 
     v0 = c - a
     v1 = b - a
     v2 = p - a
 
-    dot00 = np.dot(v0, v0)
-    dot01 = np.dot(v0, v1)
-    dot02 = np.dot(v0, v2)
-    dot11 = np.dot(v1, v1)
-    dot12 = np.dot(v1, v2)
+    dot00 = dot(v0, v0)
+    dot01 = dot(v0, v1)
+    dot02 = dot(v0, v2)
+    dot11 = dot(v1, v1)
+    dot12 = dot(v1, v2)
 
     denom = dot00 * dot11 - dot01 * dot01
 
@@ -93,11 +173,8 @@ def pointInsideOrEdgeTriangle(a, b, c, p):
 def isEar(index, polygon, normal):
     n = len(polygon)
 
-    if n < 3:
-        return False
-
-    if n == 3:
-        return True
+    if n <  3: return False
+    if n == 3: return True
 
     prevIndex = (index - 1 + n) % n
     itemIndex = index % n
@@ -117,7 +194,6 @@ def isEar(index, polygon, normal):
             continue
 
         p = polygon[i]
-        
         if pointInsideOrEdgeTriangle(prev, item, next, p):
             return False
 
@@ -126,11 +202,8 @@ def isEar(index, polygon, normal):
 def getBiggestEar(polygon, normal):
     n = len(polygon)
 
-    if n == 3:
-        return 0
-
-    if n == 0:
-        return -1
+    if n == 3: return 0
+    if n == 0: return -1
 
     maxIndex = -1
     maxArea = float("-inf")
@@ -152,11 +225,8 @@ def getBiggestEar(polygon, normal):
 def convex(polygon, normal):
     n = len(polygon)
 
-    if n < 3:
-        return False
-
-    if n == 3:
-        return True
+    if n <  3: return False
+    if n == 3: return True
 
     polygonTurn = TurnDirection.NoTurn
 
@@ -182,8 +252,7 @@ def convex(polygon, normal):
 def clockwiseOriented(polygon, normal):
     n = len(polygon)
 
-    if n < 3:
-        return False
+    if n < 3: return False
 
     orientationSum = 0.0
 
@@ -195,8 +264,8 @@ def clockwiseOriented(polygon, normal):
         edge = item - prev
         toNextPoint = next - item
 
-        v = np.cross(edge, toNextPoint)
-        orientationSum += np.dot(v, normal)
+        v = cross(edge, toNextPoint)
+        orientationSum += dot(v, normal)
 
     return orientationSum < 0.0
 
@@ -214,14 +283,15 @@ def fanTriangulation(polygon):
     return triangles
 
 def cutTriangulation(polygon, normal):
+    
     triangles = []
+    
     makeClockwiseOrientation(polygon, normal)
 
     while polygon:
         index = getBiggestEar(polygon, normal)
 
-        if index == -1:
-            return []
+        if index == -1: return []
 
         n = len(polygon)
 
@@ -233,16 +303,31 @@ def cutTriangulation(polygon, normal):
 
         del polygon[index]
 
-        if len(polygon) < 3:
-            break
+        if len(polygon) < 3: break
 
-    return triangles if len(polygon) == 2 else []
+    return triangles if len(polygon) < 3 else []
+
+def removeConsecutiveEqualPoints(polygon):
+    uniquePolygon = []
+    n = len(polygon)
+    for index in range(n):
+        item = polygon[index % n]
+        next = polygon[(index + 1) % n]
+        if item.i == next.i: continue
+        uniquePolygon.append(item)
+    return uniquePolygon
 
 def triangulate(polygon):
-    if len(polygon) < 3:
-        return [], np.array([0,0,0])
-
+    
+    polygon = removeConsecutiveEqualPoints(polygon)
+    
     n = normal(polygon)
+    
+    if len(polygon) < 3: return [], n
+
+    if len(polygon) == 3:
+        t = Triangle(polygon[0], polygon[1], polygon[2])
+        return [t], n
 
     if convex(polygon, n):
         return fanTriangulation(polygon), n
