@@ -1,13 +1,17 @@
 # pyOBJExplorer
 
-Explore 3D visualization of Wavefront OBJ models with [pyOBJParser](https://github.com/StefanJohnsen/pyOBJParser), a showcase of how to integrate VPython and pyOBJParser. pyOBJExplorer offers an intuitive and straightforward solution, allowing users to delve into the intricate details of textures, materials, and geometries within OBJ files. Ideal for students, designers, and 3D modeling enthusiasts, pyOBJExplorer is an excellent tool for experiencing and interacting with 3D models in a user-friendly environment.
+Explore 3D visualization of Wavefront OBJ models with [pyOBJParser](https://github.com/StefanJohnsen/pyOBJParser), a showcase of how to integrate VPython and pyOBJParser. pyOBJExplorer offers an intuitive and straightforward solution, allowing users to delve into the intricate details of textures, materials, and geometries within OBJ files.
+
+# VPython (Visual Python)
+[VPython](https://en.wikipedia.org/wiki/VPython) is a lightweight and simple Python library for creating interactive 3D visualizations and simulations, often used in education to teach concepts like physics and computer science. Testing Wavefront OBJ files larger than 10 MB for simulation is not recommended.
+
 
 ![OBJExplorer](https://github.com/StefanJohnsen/pyOBJExplorer/blob/main/objFiles/explorer.png)
 
 ### Following files is included
 - `Explorer.py` The main file to run. It can also be executed from the command line with a specified OBJ file.
-- `WavefrontOBJ.py` A standalone parser for OBJ files (a copy from : [pyOBJParser](https://github.com/StefanJohnsen/pyOBJParser))
-- `WavefrontMTL.py` A standalone parser for MTL files (a copy from : [pyOBJParser](https://github.com/StefanJohnsen/pyOBJParser))
+- `WavefrontOBJ.py` *source: [pyOBJParser](https://github.com/StefanJohnsen/pyOBJParser)*
+- `WavefrontMTL.py` *source: [pyOBJParser](https://github.com/StefanJohnsen/pyOBJParser)*
 - `Triangulate.py` Used for converting polygon faces in OBJ files into triangles through fan and earcut triangulation techniques.
 
 ### Dependencies
