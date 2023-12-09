@@ -240,13 +240,19 @@ def create_faces(obj, geometry, material):
 
         polygon = []
         for i in face.vertex:
-            v = obj.vertex[i]
+            p = obj.vertex[i]
+            v = Triangulate.Point(p[0], p[1], p[2], i)
             polygon.append(v)
 
-        triangles, n = Triangulate.triangulate(polygon)
+        triangles, normal = Triangulate.triangulate(polygon)
+
+        n = np.array([normal.x, normal.y, normal.z])
 
         for t in triangles:
-            create_triangle_normal(t.p0, t.p1, t.p2, n, n, n, color)
+            v0 = np.array([t.p0.x, t.p0.y, t.p0.z])
+            v1 = np.array([t.p1.x, t.p1.y, t.p1.z])
+            v2 = np.array([t.p2.x, t.p2.y, t.p2.z])
+            create_triangle_normal(v0, v1, v2, n, n, n, color)
 
 def create_geometry(obj, mtl, geometry, wireframe):
     if geometry is None: return
