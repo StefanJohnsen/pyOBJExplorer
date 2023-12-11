@@ -12,7 +12,7 @@ Explore 3D visualization of Wavefront OBJ models with [pyOBJParser](https://gith
 - `Explorer.py` The main file to run. It can also be executed from the command line with a specified OBJ file.
 - `WavefrontOBJ.py` *source: [pyOBJParser](https://github.com/StefanJohnsen/pyOBJParser)*
 - `WavefrontMTL.py` *source: [pyOBJParser](https://github.com/StefanJohnsen/pyOBJParser)*
-- `Triangulate.py` *source: [pyOBJParser](https://github.com/StefanJohnsen/pyTriangulate)*
+- `Triangulate.py` *source: [pyTriangulate](https://github.com/StefanJohnsen/pyTriangulate)*
 
 ### Dependencies
 - os
