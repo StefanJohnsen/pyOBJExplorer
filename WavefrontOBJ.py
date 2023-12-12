@@ -84,11 +84,11 @@ class WavefrontOBJ:
 
                 elif command == 'p':  # Point
                     indices = [int(index) - 1 for index in data]
-                    geometry.p.append(indices)
+                    geometry.point.append(indices)
 
                 elif command == 'l':  # Line
                     indices = [int(index) - 1 for index in data]
-                    geometry.l.append(indices)
+                    geometry.line.append(indices)
 
                 elif command == 'f':  # Face
                     face = Face()
