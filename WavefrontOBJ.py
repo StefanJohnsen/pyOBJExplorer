@@ -7,6 +7,7 @@
 # This software is released under the MIT License.
 
 import os
+import sys
 import numpy as np
 
 vector = np.array
@@ -83,12 +84,13 @@ class WavefrontOBJ:
                     self.normal.append(vector([x, y, z]))
 
                 elif command == 'p':  # Point
-                    indices = [int(index) - 1 for index in data]
+                    indices = [index(item, self.vertex) for item in data]
                     geometry.point.append(indices)
 
                 elif command == 'l':  # Line
-                    indices = [int(index) - 1 for index in data]
-                    geometry.line.append(indices)
+                    indices = [index(item, self.vertex) for item in data]
+                    if len(indices) == 2:
+                        geometry.line.append(indices)
 
                 elif command == 'f':  # Face
                     face = Face()
@@ -108,15 +110,30 @@ class WavefrontOBJ:
 
     def aabb(self):  # axis-aligned bounding box
         if not self.vertex:
-            return None
+            zero = np.array([0.0, 0.0, 0.0])
+            return zero, zero
 
-        # Convert the first vertex to a NumPy array
-        min_coord = np.array(self.vertex[0])
-        max_coord = np.array(self.vertex[0])
+        max = sys.float_info.max
+        
+        min_coord = np.array([+max, +max, +max])
+        max_coord = np.array([-max, -max, -max])
 
-        for v in self.vertex:
-            min_coord = np.minimum(min_coord, v)
-            max_coord = np.maximum(max_coord, v)
+        for geometry in self.geometry:
+            for face in geometry.face:
+                for i in face.vertex:
+                    vertex = self.vertex[i]
+                    min_coord = np.minimum(min_coord, vertex)
+                    max_coord = np.maximum(max_coord, vertex)
+            for line in geometry.line:
+                for i in line:
+                    vertex = self.vertex[i]
+                    min_coord = np.minimum(min_coord, vertex)
+                    max_coord = np.maximum(max_coord, vertex)
+            for point in geometry.point:
+                for i in point:
+                    vertex = self.vertex[i]
+                    min_coord = np.minimum(min_coord, vertex)
+                    max_coord = np.maximum(max_coord, vertex)
 
         # Calculate center and size
         center = (max_coord + min_coord) / 2
@@ -125,6 +142,7 @@ class WavefrontOBJ:
         return center, size
     
     def translate(self, translation):    
+        if translation is None: return
         if not self.vertex: return
         self.vertex += translation
 
