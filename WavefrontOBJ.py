@@ -109,14 +109,18 @@ class WavefrontOBJ:
         self.geometry.append(geometry)
 
     def aabb(self):  # axis-aligned bounding box
+        
+        zero = np.array([0.0, 0.0, 0.0])
+        
         if not self.vertex:
-            zero = np.array([0.0, 0.0, 0.0])
             return zero, zero
 
         max = sys.float_info.max
         
-        min_coord = np.array([+max, +max, +max])
-        max_coord = np.array([-max, -max, -max])
+        start = np.array([max, max, max])
+        
+        min_coord = +start
+        max_coord = -start
 
         for geometry in self.geometry:
             for face in geometry.face:
@@ -135,6 +139,9 @@ class WavefrontOBJ:
                     min_coord = np.minimum(min_coord, vertex)
                     max_coord = np.maximum(max_coord, vertex)
 
+        if np.all(min_coord == start) or np.all(max_coord == start):
+            return zero, zero
+            
         # Calculate center and size
         center = (max_coord + min_coord) / 2
         size = max_coord - min_coord
